@@ -114,7 +114,66 @@
 
 
   
-    <article id="post-7j6vrmc9zvi2xilv" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-k4s47quis4kf3g63" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        <i class="fa fa-file-text-o"></i>
+        
+  
+    <h1 class="archive-title" itemprop="name">
+      <a class="article-title" href="/2014/07/02/一次意想不到的OOM-of-Zookeeper/">一次意想不到的OOM of Zookeeper</a>
+    </h1>
+  
+
+
+        <div class="article-date">
+  <time datetime="2014-07-02T07:59:36.000Z" itemprop="datePublished">Jul 2 2014</time>
+</div>
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+          <!--<div class="thumbnail"><img src="http://qipa.qiniudn.com/20140702/memLeak.png" alt="Memory leak when using PathChildrenCache"></div>-->
+          <p>前阵子把搜索项目从 HTTP RPC 迁移到基于<a href="https://github.com/mahuabian/ttpod/tree/master/ttpod-rpc" target="_blank" rel="external">Netty TCP RPC</a> 之后，为了实现服务自动注册，发现功能，开始使用<a href="http://zookeeper.apache.org" target="_blank" rel="external">ZooKeeper</a>。</p>
+<p>一开始小范围使用zookeeper，就直接简单基于API做了Path Watcher实现了服务自动发现。线上灰量运行半个月，表现稳定，于是打算全部迁移到Netty RPC。但是并不完美，存在一个问题，就是Zookeeper SESSION_EXPIRED(Session 过期)。默认的Zookeeper Client认为session Expired是比较严重的问题，不会重连，导致Client不可用。</p>
+<p>参见官方FAQ：<a href="http://wiki.apache.org/hadoop/ZooKeeper/FAQ#A3" target="_blank" rel="external">How should I handle SESSION_EXPIRED</a></p>
+<p>后面发现 <a href="http://curator.apache.org" target="_blank" rel="external">Apache Curator</a> 完美解决了这个问题，在尽可能减少依赖和解决问题之间，没时间了，选后者！而且提供的几个菜谱的确好用，之间替换掉了之前之间操作Zookeeper的代码，小渠道上线之后观察了两天，一切正常，于是服务开始全部迁移，OOM噩梦开始。</p>
+
+          
+            <p class="article-more-link">
+              <a href="/2014/07/02/一次意想不到的OOM-of-Zookeeper/#more">Read More</a>
+            </p>
+          
+        
+        <footer class="article-footer">
+          <a data-url="http://bianzi.me/2014/07/02/一次意想不到的OOM-of-Zookeeper/" data-id="k4s47quis4kf3g63" data_title="一次意想不到的OOM of Zookeeper"
+          data_summary="前阵子把搜索项目从 HTTP RPC 迁移到基于Netty TCP RPC 之后，为了实现服务自动注册，发现功能，开始使用ZooKeeper。
+一开始小范围使用zookeeper，就直接简单基于API做了Pa..." class="article-share-link">Share</a>
+          
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/技术/">技术</a>
+  </div>
+
+
+          
+<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link label label-primary" href="/tags/jvm/">jvm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-success" href="/tags/oom/">oom</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-info" href="/tags/zookeeper/">zookeeper</a></li></ul>
+
+
+        </footer>
+      
+    </div>
+  </div>
+</article>
+
+
+  
+    <article id="post-hnvr3iep6q1uz5wc" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
@@ -162,7 +221,7 @@
 
         
         <footer class="article-footer">
-          <a data-url="http://bianzi.me/2014/07/01/hello-world/" data-id="7j6vrmc9zvi2xilv" data_title="Hello World"
+          <a data-url="http://bianzi.me/2014/07/01/hello-world/" data-id="hnvr3iep6q1uz5wc" data_title="Hello World"
           data_summary="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in trobulesho..." class="article-share-link">Share</a>
           
           
@@ -199,6 +258,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li class="recent-list">
+            <a href="/2014/07/02/一次意想不到的OOM-of-Zookeeper/">一次意想不到的OOM of Zookeeper</a>
+          </li>
         
           <li class="recent-list">
             <a href="/2014/07/01/hello-world/">Hello World</a>
