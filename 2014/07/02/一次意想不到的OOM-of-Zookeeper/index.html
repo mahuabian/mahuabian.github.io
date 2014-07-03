@@ -111,7 +111,7 @@
       
       <section id="main"
         
-      ><article id="post-ip3jw0pyrbw2o8wm" class="article article-type-post" itemscope itemprop="blogPost">
+      ><article id="post-sfizx6d11xp7xmxz" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
@@ -152,14 +152,23 @@ java.lang.OutOfMemoryError: Metaspace
 <p>有堆栈，有谷歌，于是顺利又意外的找到了这里<a href="https://issues.apache.org/jira/browse/CURATOR-105" target="_blank" rel="external">Memory leak when using PathChildrenCache</a></p>
 <p><img src="http://qipa.qiniudn.com/20140702/memLeak.png" alt="Memory leak when using PathChildrenCache"></p>
 <p>发现问题已经FIX状态，赶紧把<code>2.4.2</code>版本升级到了<code>2.5.0</code>，窃以为万事大吉，木想到才刚刚开始。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre>1
+<h2 id="oom-时而有，时而不常有">OOM 时而有，时而不常有</h2><p>当运帷同事的报警电话打到你的手机里的一刹那，眩晕没用，淡定的先解决问题，虽然满脑子在想这到底是咋回事？粗略看了下RPC服务两端的日志，由于在框架里面加入了耗时请求统计，发现前段慢请求比较多，而后端服务只有少量慢请求。看来问题可以定位在前端，但一时半会也没有找到病根，只好先用个保姆程序监控下，不然没法子睡觉了，别说看球了。。</p>
+<figure class="highlight log"><figcaption><span>前端慢请求日志较多，而后端rpc server很少</span></figcaption><table><tr><td class="gutter"><pre>1
 2
-</pre></td><td class="code"><pre>// compile <span class="string">"org.apache.curator:curator-recipes:2.4.2"</span>
- compile <span class="string">"org.apache.curator:curator-recipes:2.5.0"</span>
+3
+4
+5
+6
+7
+</pre></td><td class="code"><pre><span class="number">23</span>:<span class="number">01</span>:<span class="number">11.992</span> INFO[qtp1335050193-<span class="number">384</span>] c<span class="preprocessor">.t</span><span class="preprocessor">.r</span><span class="preprocessor">.w</span><span class="preprocessor">.s</span><span class="preprocessor">.ControllerSupport</span> &lt; slow request : /songs/search ,cost : <span class="number">1633</span> ms &gt;
+<span class="number">23</span>:<span class="number">01</span>:<span class="number">12.002</span> INFO[qtp1335050193-<span class="number">430</span>] c<span class="preprocessor">.t</span><span class="preprocessor">.r</span><span class="preprocessor">.w</span><span class="preprocessor">.s</span><span class="preprocessor">.ControllerSupport</span> &lt; slow request : /songs/search ,cost : <span class="number">2218</span> ms &gt;
+<span class="number">23</span>:<span class="number">01</span>:<span class="number">12.004</span> INFO[qtp1335050193-<span class="number">360</span>] c<span class="preprocessor">.t</span><span class="preprocessor">.r</span><span class="preprocessor">.w</span><span class="preprocessor">.s</span><span class="preprocessor">.ControllerSupport</span> &lt; slow request : /songs/search ,cost : <span class="number">2527</span> ms &gt;
+<span class="number">23</span>:<span class="number">01</span>:<span class="number">12.006</span> INFO[qtp1335050193-<span class="number">47</span>] c<span class="preprocessor">.t</span><span class="preprocessor">.r</span><span class="preprocessor">.w</span><span class="preprocessor">.s</span><span class="preprocessor">.ControllerSupport</span> &lt; slow request : /songs/search ,cost : <span class="number">1592</span> ms &gt;
+<span class="number">23</span>:<span class="number">01</span>:<span class="number">12.041</span> INFO[qtp1335050193-<span class="number">432</span>] c<span class="preprocessor">.t</span><span class="preprocessor">.r</span><span class="preprocessor">.w</span><span class="preprocessor">.s</span><span class="preprocessor">.ControllerSupport</span> &lt; slow request : /songs/search ,cost : <span class="number">2652</span> ms &gt;
+<span class="number">23</span>:<span class="number">01</span>:<span class="number">12.187</span> INFO[qtp1335050193-<span class="number">427</span>] c<span class="preprocessor">.t</span><span class="preprocessor">.r</span><span class="preprocessor">.w</span><span class="preprocessor">.s</span><span class="preprocessor">.ControllerSupport</span> &lt; slow request : /songs/search ,cost : <span class="number">1776</span> ms &gt;
+<span class="number">23</span>:<span class="number">01</span>:<span class="number">12.033</span> INFO[qtp1335050193-<span class="number">456</span>] c<span class="preprocessor">.t</span><span class="preprocessor">.r</span><span class="preprocessor">.w</span><span class="preprocessor">.s</span><span class="preprocessor">.ControllerSupport</span> &lt; slow request : /songs/search ,cost : <span class="number">2031</span> ms &gt;
 </pre></td></tr></table></figure>
 
-
-<h2 id="oom-时而有，时而不常有">OOM 时而有，时而不常有</h2><p>当运帷同事的报警电话打到你的手机里的一刹那，眩晕没用，淡定的先解决问题，虽然满脑子在想这到底是咋回事呢？由于一时半会没有找到解决方案，只好先用个保姆程序监控下，不然没法子睡觉了，别说看球了。。</p>
 <h3 id="无奈之举，启用保姆">无奈之举，启用保姆</h3><figure class="highlight bash"><figcaption><span>crontab * * * * * ~/baby.sh</span></figcaption><table><tr><td class="gutter"><pre>1
 2
 3
