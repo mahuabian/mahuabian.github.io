@@ -135,7 +135,7 @@ jav">
       
       <section id="main"
         
-      ><article id="post-0x8isiug901ii3vj" class="article article-type-post" itemscope itemprop="blogPost">
+      ><article id="post-emoukarre6uf0p60" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
@@ -160,6 +160,8 @@ jav">
         at org<span class="preprocessor">.eclipse</span><span class="preprocessor">.jetty</span><span class="preprocessor">.util</span><span class="preprocessor">.thread</span><span class="preprocessor">.QueuedThreadPool</span>$3<span class="preprocessor">.run</span>(QueuedThreadPool<span class="preprocessor">.java</span>:<span class="number">566</span>)
         at java<span class="preprocessor">.lang</span><span class="preprocessor">.Thread</span><span class="preprocessor">.run</span>(Thread<span class="preprocessor">.java</span>:<span class="number">722</span>)
 </pre></td></tr></table></figure>
+
+<a id="more"></a>
 
 <h2 id="ulimit--u-1024">ulimit -u 1024</h2><p>顺藤摸瓜，不能创建新线程，而系统内存只用了一半不到，先看了下系统限制 :</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre>1
@@ -286,7 +288,7 @@ $ grep tid= thread.log |awk <span class="string">'{print substr($1,2,10)}'</span
       
     </li>
     <li>
-      <a data-url="http://bianzi.me/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html" data-id="0x8isiug901ii3vj" data_title="jstack捕获的OOM unable to create new native thread"
+      <a data-url="http://bianzi.me/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html" data-id="emoukarre6uf0p60" data_title="jstack捕获的OOM unable to create new native thread"
         data_summary="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread
 1
 2
