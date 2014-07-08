@@ -107,7 +107,7 @@
         
       >
   
-    <article id="post-qmj3ldfwrwo2ddoo" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-48giucjvnhdy7ag3" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
@@ -144,7 +144,7 @@
           
         
         <footer class="article-footer">
-          <a data-url="http://bianzi.me/2014/一次意想不到的OOM-of-Zookeeper.html" data-id="qmj3ldfwrwo2ddoo" data_title="一次意想不到的OOM of Zookeeper"
+          <a data-url="http://bianzi.me/2014/一次意想不到的OOM-of-Zookeeper.html" data-id="48giucjvnhdy7ag3" data_title="一次意想不到的OOM of Zookeeper"
           data_summary="前阵子把搜索项目从 HTTP RPC 迁移到基于Netty TCP RPC 之后，为了实现服务自动注册，发现功能，开始使用ZooKeeper。
 一开始小范围使用zookeeper，简单粗暴基于原生API做了..." class="article-share-link">Share</a>
           
@@ -156,6 +156,178 @@
 
           
 <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link label label-primary" href="/tags/jvm/">jvm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-success" href="/tags/oom/">oom</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-info" href="/tags/zookeeper/">zookeeper</a></li></ul>
+
+
+        </footer>
+      
+    </div>
+  </div>
+</article>
+
+
+  
+    <article id="post-0x8isiug901ii3vj" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        <i class="fa fa-file-text-o"></i>
+        
+  
+    <h1 class="archive-title" itemprop="name">
+      <a class="article-title" href="/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html">jstack捕获的OOM unable to create new native thread</a>
+    </h1>
+  
+
+
+        <div class="article-date">
+  <time datetime="2013-11-26T06:50:52.000Z" itemprop="datePublished">Nov 26 2013</time>
+</div>
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+          <h2 id="unable-to-create-new-native-thread">unable to create new native thread</h2><p>最近线上一个solr程序总是在两三天之后出现<code>OutOfMemoryError</code>: unable to create new native thread</p>
+<figure class="highlight log"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre><span class="number">2013</span>-<span class="number">11</span>-<span class="number">22</span> <span class="number">22</span>:<span class="number">17</span>:<span class="number">00.338</span>:WARN:oejut<span class="preprocessor">.QueuedThreadPool</span>:qtp785307846-<span class="number">8002</span>: 
+<span class="label">java.lang.OutOfMemoryError:</span> unable to create new native thread
+        at java<span class="preprocessor">.lang</span><span class="preprocessor">.Thread</span><span class="preprocessor">.start</span>0(Native Method)
+        at java<span class="preprocessor">.lang</span><span class="preprocessor">.Thread</span><span class="preprocessor">.start</span>(Thread<span class="preprocessor">.java</span>:<span class="number">691</span>)
+        at org<span class="preprocessor">.eclipse</span><span class="preprocessor">.jetty</span><span class="preprocessor">.util</span><span class="preprocessor">.thread</span><span class="preprocessor">.QueuedThreadPool</span><span class="preprocessor">.startThreads</span>(QueuedThreadPool<span class="preprocessor">.java</span>:<span class="number">422</span>)
+        at org<span class="preprocessor">.eclipse</span><span class="preprocessor">.jetty</span><span class="preprocessor">.util</span><span class="preprocessor">.thread</span><span class="preprocessor">.QueuedThreadPool</span><span class="preprocessor">.access</span>$200(QueuedThreadPool<span class="preprocessor">.java</span>:<span class="number">48</span>)
+        at org<span class="preprocessor">.eclipse</span><span class="preprocessor">.jetty</span><span class="preprocessor">.util</span><span class="preprocessor">.thread</span><span class="preprocessor">.QueuedThreadPool</span>$3<span class="preprocessor">.run</span>(QueuedThreadPool<span class="preprocessor">.java</span>:<span class="number">566</span>)
+        at java<span class="preprocessor">.lang</span><span class="preprocessor">.Thread</span><span class="preprocessor">.run</span>(Thread<span class="preprocessor">.java</span>:<span class="number">722</span>)
+</pre></td></tr></table></figure>
+
+<h2 id="ulimit--u-1024">ulimit -u 1024</h2><p>顺藤摸瓜，不能创建新线程，而系统内存只用了一半不到，先看了下系统限制 :</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>$ ulimit -u
+<span class="number">1024</span>
+</pre></td></tr></table></figure>
+
+<p>这个是系统允许当前用户创建的总任务数（包括进程和线程）。JVM Thread 在linux上的实现其实是使用native threads实现的。
+<a href="http://publib.boulder.ibm.com/infocenter/javasdk/v1r4m2/index.jsp?topic=%2Fcom.ibm.java.doc.diagnostics.142j9%2Fhtml%2Fknowlimlinux.html" target="_blank" rel="external">The JVM for Linux® implements Java™ threads as native threads.</a></p>
+<p>而在linux系统上进程和线程最终都是通过 <a href="http://man7.org/linux/man-pages/man2/clone.2.html" target="_blank" rel="external">clone</a> 指令实现的。参考：<br><a href="http://stackoverflow.com/questions/9477753/linux-system-call-for-creating-process-and-thread" target="_blank" rel="external">http://stackoverflow.com/questions/9477753/linux-system-call-for-creating-process-and-thread</a></p>
+<p>因为这个用户下就只跑了这个solr程序，1024个任务数，足够了，一般的java web程序，线程数不过100～200个左右。而应用场景，确实不需要创建如此之多的线程，看来更可能是线程泄露。</p>
+<h2 id="线程泄露">线程泄露</h2><p>先看下现在的虚拟机线程数，<code>jstack</code>登场</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>$ jstack <span class="number">29190</span>|grep tid=| wc <span class="operator">-l</span>
+<span class="number">911</span>
+</pre></td></tr></table></figure>
+居然这么多线程，间隔几分钟运行之后，发现
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+</pre></td><td class="code"><pre>$ jstack <span class="number">29190</span>|grep tid=| wc <span class="operator">-l</span>
+<span class="number">913</span>
+$ jstack <span class="number">29190</span>|grep tid=| wc <span class="operator">-l</span>
+<span class="number">915</span>
+</pre></td></tr></table></figure>
+
+<p>看看啥线程这么多</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre>$ jstack <span class="number">29190</span> &gt; thread.log
+$ grep tid= thread.log |awk <span class="string">'{print substr($1,2,10)}'</span> | sort | uniq -c| sort -rn
+<span class="number">369</span> ReplicaSet
+<span class="number">369</span> MongoClean
+<span class="number">123</span> qtp1952480
+</pre></td></tr></table></figure>
+
+<figure class="highlight log"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+</pre></td><td class="code"><pre><span class="string">"MongoCleaner988386810"</span> daemon prio=<span class="number">10</span> tid=<span class="number">0x00007fe5ec7b6000</span> nid=<span class="number">0x48bb</span> waiting <span class="command"><span class="keyword">on</span> <span class="title">condition</span> [<span class="title">0x00007fe6cba27000</span>]</span>
+<span class="string">"ReplicaSetStatus:Updater"</span> daemon prio=<span class="number">10</span> tid=<span class="number">0x00007fe5ec7c3000</span> nid=<span class="number">0x4858</span> waiting <span class="command"><span class="keyword">on</span> <span class="title">condition</span> [<span class="title">0x00007fe6c9f0c000</span>]</span>
+<span class="string">"MongoCleaner1991899475"</span> daemon prio=<span class="number">10</span> tid=<span class="number">0x00007fe5ec79e800</span> nid=<span class="number">0x4857</span> waiting <span class="command"><span class="keyword">on</span> <span class="title">condition</span> [<span class="title">0x00007fe6ca815000</span>]</span>
+<span class="string">"ReplicaSetStatus:Updater"</span> daemon prio=<span class="number">10</span> tid=<span class="number">0x00007fe5ec7b3000</span> nid=<span class="number">0x47ff</span> waiting <span class="command"><span class="keyword">on</span> <span class="title">condition</span> [<span class="title">0x00007fe6c9b08000</span>]</span>
+<span class="string">"MongoCleaner50739983"</span> daemon prio=<span class="number">10</span> tid=<span class="number">0x00007fe5ec7cf800</span> nid=<span class="number">0x47fe</span> waiting <span class="command"><span class="keyword">on</span> <span class="title">condition</span> [<span class="title">0x00007fe6ca10e000</span>]</span>
+<span class="string">"ReplicaSetStatus:Updater"</span> daemon prio=<span class="number">10</span> tid=<span class="number">0x00007fe5ec7d3800</span> nid=<span class="number">0x478c</span> waiting <span class="command"><span class="keyword">on</span> <span class="title">condition</span> [<span class="title">0x00007fe6c9603000</span>]</span>
+</pre></td></tr></table></figure>
+
+<h2 id="代码定位">代码定位</h2><p>看来是mongo连接池没有释放，造成的泄露。 定位下代码哪里有创建mongo实例的地方，马上找到了根源，solr 从Mongo导入的时候，每次都创建新的<code>Mongo</code>实例，而没有在运行结束之后关闭。</p>
+<figure class="highlight java"><figcaption><span>org.apache.solr.handler.dataimport.MongoDataSource.init()</span></figcaption><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="code"><pre>Mongo mongo;
+<span class="keyword">if</span> (host.contains(<span class="string">","</span>)) {
+    List&lt;ServerAddress&gt; addresses = <span class="keyword">new</span> ArrayList&lt;ServerAddress&gt;();
+    ......
+    mongo = <span class="keyword">new</span> Mongo(addresses);
+    mongo.slaveOk();
+} <span class="keyword">else</span> {
+    mongo = <span class="keyword">new</span> Mongo(host, Integer.parseInt(port));
+}
+<span class="keyword">this</span>.mongoDb = mongo.getDB(databaseName);
+</pre></td></tr></table></figure>
+
+<h2 id="解决上线">解决上线</h2><p>知道问题了，解决起来就比较简单。由于程序使用了Spring，和导入使用的mongo数据源是一致的，这个地方换成静态的从Spring获取mongo就可以了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+</pre></td><td class="code"><pre><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span>(Context context, Properties initProps) {
+        String databaseName = initProps.getProperty(DATABASE);
+        String beanName = initProps.getProperty(springBean);
+        Mongo mongo = (Mongo) SpringApplication.getBean(beanName);
+        <span class="keyword">this</span>.mongoDb = mongo.getDB(databaseName);
+}
+</pre></td></tr></table></figure>
+
+<p>修复之后上线，终于又可以好好玩耍了！！</p>
+<p>至此，这次简单的OOM结束，感谢<code>jstack</code> !</p>
+
+        
+        <footer class="article-footer">
+          <a data-url="http://bianzi.me/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html" data-id="0x8isiug901ii3vj" data_title="jstack捕获的OOM unable to create new native thread"
+          data_summary="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread
+1
+2
+3
+4
+5
+6
+7
+8
+2013-11-22 22:17:..." class="article-share-link">Share</a>
+          
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/技术/">技术</a>
+  </div>
+
+
+          
+<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link label label-primary" href="/tags/jstack/">jstack</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-success" href="/tags/oom/">oom</a></li></ul>
 
 
         </footer>
@@ -187,7 +359,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <a class="category-link" href="/categories/技术/">技术<span class="category-count">1</span></a>
+      <a class="category-link" href="/categories/技术/">技术<span class="category-count">2</span></a>
     </div>
   </div>
 
@@ -197,7 +369,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <a class="tag-link" href="/tags/jvm/">jvm<span class="tag-count">1</span></a><a class="tag-link" href="/tags/oom/">oom<span class="tag-count">1</span></a><a class="tag-link" href="/tags/zookeeper/">zookeeper<span class="tag-count">1</span></a>
+      <a class="tag-link" href="/tags/jstack/">jstack<span class="tag-count">1</span></a><a class="tag-link" href="/tags/jvm/">jvm<span class="tag-count">1</span></a><a class="tag-link" href="/tags/oom/">oom<span class="tag-count">2</span></a><a class="tag-link" href="/tags/zookeeper/">zookeeper<span class="tag-count">1</span></a>
     </div>
   </div>
 
@@ -207,7 +379,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07">July 2014</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07">July 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/11">November 2013</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 

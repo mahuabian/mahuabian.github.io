@@ -3,17 +3,47 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tag: oom | 麻花辫子</title>
+  <title>jstack捕获的OOM unable to create new native thread | 麻花辫子</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="麻花辫子">
-<meta property="og:url" content="http://bianzi.me/tags/oom/">
+  <meta name="description" content="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread
+1
+2
+3
+4
+5
+6
+7
+8
+2013-11-22 22:17:00.338:WARN:oejut.QueuedThreadPool:qtp785307846-8002: 
+jav">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jstack捕获的OOM unable to create new native thread">
+<meta property="og:url" content="http://bianzi.me/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html">
 <meta property="og:site_name" content="麻花辫子">
-<meta property="og:description">
+<meta property="og:description" content="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread
+1
+2
+3
+4
+5
+6
+7
+8
+2013-11-22 22:17:00.338:WARN:oejut.QueuedThreadPool:qtp785307846-8002: 
+jav">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="麻花辫子">
-<meta name="twitter:description">
+<meta name="twitter:title" content="jstack捕获的OOM unable to create new native thread">
+<meta name="twitter:description" content="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread
+1
+2
+3
+4
+5
+6
+7
+8
+2013-11-22 22:17:00.338:WARN:oejut.QueuedThreadPool:qtp785307846-8002: 
+jav">
   
     <link rel="alternative" href="/atom.xml" title="麻花辫子" type="application/atom+xml">
   
@@ -97,9 +127,7 @@
           <div class="page-header">
             <h1 class="title">
           
-            
-              oom
-            
+            jstack捕获的OOM unable to create new native thread
           
             </h1>
         </div>
@@ -107,93 +135,14 @@
       
       <section id="main"
         
-      >
-  
-  
-    <article id="post-48giucjvnhdy7ag3" class="article article-type-post" itemscope itemprop="blogPost">
+      ><article id="post-0x8isiug901ii3vj" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
     
-      <header class="article-header">
-        <i class="fa fa-file-text-o"></i>
-        
-  
-    <h1 class="archive-title" itemprop="name">
-      <a class="article-title" href="/2014/一次意想不到的OOM-of-Zookeeper.html">一次意想不到的OOM of Zookeeper</a>
-    </h1>
-  
-
-
-        <div class="article-date">
-  <time datetime="2014-07-02T07:59:36.000Z" itemprop="datePublished">Jul 2 2014</time>
-</div>
-
-      </header>
-    
     <div class="article-entry" itemprop="articleBody">
       
-        
-          <!--<div class="thumbnail"><img src="http://qipa.qiniudn.com/20140702/memLeak.png" alt="Memory leak when using PathChildrenCache"></div>-->
-          <p>前阵子把搜索项目从 HTTP RPC 迁移到基于<a href="https://github.com/mahuabian/ttpod/tree/master/ttpod-rpc" target="_blank" rel="external">Netty TCP RPC</a> 之后，为了实现服务自动注册，发现功能，开始使用<a href="http://zookeeper.apache.org" target="_blank" rel="external">ZooKeeper</a>。</p>
-<p>一开始小范围使用zookeeper，简单粗暴基于原生API做了Path Watcher实现了服务自动发现。线上灰量运行半个月，表现稳定，于是打算全部迁移到Netty RPC。但是并不完美，存在一个问题，就是Zookeeper SESSION_EXPIRED(Session 过期)。默认的Zookeeper Client认为session Expired是比较严重的问题，不会重连，导致Client不可用。</p>
-<p>参见官方FAQ：<a href="http://wiki.apache.org/hadoop/ZooKeeper/FAQ#A3" target="_blank" rel="external">How should I handle SESSION_EXPIRED</a></p>
-<p>后面发现 <a href="http://curator.apache.org" target="_blank" rel="external">Apache Curator</a> 完美解决了这个问题，在尽可能减少依赖和解决问题之间，没时间了，选后者！而且提供的几个菜谱的确好用，瞬间替换掉了之前粗暴操作Zookeeper的代码，小渠道上线之后观察了两天，一切正常，于是服务开始全部迁移，OOM噩梦开始。</p>
-
-          
-            <p class="article-more-link">
-              <a href="/2014/一次意想不到的OOM-of-Zookeeper.html#more">Read More</a>
-            </p>
-          
-        
-        <footer class="article-footer">
-          <a data-url="http://bianzi.me/2014/一次意想不到的OOM-of-Zookeeper.html" data-id="48giucjvnhdy7ag3" data_title="一次意想不到的OOM of Zookeeper"
-          data_summary="前阵子把搜索项目从 HTTP RPC 迁移到基于Netty TCP RPC 之后，为了实现服务自动注册，发现功能，开始使用ZooKeeper。
-一开始小范围使用zookeeper，简单粗暴基于原生API做了..." class="article-share-link">Share</a>
-          
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/技术/">技术</a>
-  </div>
-
-
-          
-<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link label label-primary" href="/tags/jvm/">jvm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-success" href="/tags/oom/">oom</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-info" href="/tags/zookeeper/">zookeeper</a></li></ul>
-
-
-        </footer>
-      
-    </div>
-  </div>
-</article>
-
-
-  
-    <article id="post-0x8isiug901ii3vj" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-
-    
-      <header class="article-header">
-        <i class="fa fa-file-text-o"></i>
-        
-  
-    <h1 class="archive-title" itemprop="name">
-      <a class="article-title" href="/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html">jstack捕获的OOM unable to create new native thread</a>
-    </h1>
-  
-
-
-        <div class="article-date">
-  <time datetime="2013-11-26T06:50:52.000Z" itemprop="datePublished">Nov 26 2013</time>
-</div>
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-          <h2 id="unable-to-create-new-native-thread">unable to create new native thread</h2><p>最近线上一个solr程序总是在两三天之后出现<code>OutOfMemoryError</code>: unable to create new native thread</p>
+        <div id="toc"><span class="toc-header">Contents</span><ol class="article-toc"><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#unable-to-create-new-native-thread"><span class="article-toc-text">unable to create new native thread</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#ulimit--u-1024"><span class="article-toc-text">ulimit -u 1024</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#线程泄露"><span class="article-toc-text">线程泄露</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#代码定位"><span class="article-toc-text">代码定位</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#解决上线"><span class="article-toc-text">解决上线</span></a></li></ol></div><h2 id="unable-to-create-new-native-thread">unable to create new native thread</h2><p>最近线上一个solr程序总是在两三天之后出现<code>OutOfMemoryError</code>: unable to create new native thread</p>
 <figure class="highlight log"><table><tr><td class="gutter"><pre>1
 2
 3
@@ -309,10 +258,36 @@ $ grep tid= thread.log |awk <span class="string">'{print substr($1,2,10)}'</span
 <p>修复之后上线，终于又可以好好玩耍了！！</p>
 <p>至此，这次简单的OOM结束，感谢<code>jstack</code> !</p>
 
+      
+    </div>
+  </div>
+</article>
+
+<section id="comments">
+  <div class="ds-thread"></div>
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+</section>
         
-        <footer class="article-footer">
-          <a data-url="http://bianzi.me/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html" data-id="0x8isiug901ii3vj" data_title="jstack捕获的OOM unable to create new native thread"
-          data_summary="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread
+          
+<aside id="sidebar">
+  
+    
+      
+<div class="widget-wrap center">
+  <ul class="pagination">
+    <li>
+      
+        <a href="/2014/一次意想不到的OOM-of-Zookeeper.html" class="nav-prev">Prev</a>
+      
+    </li>
+    <li>
+      <a data-url="http://bianzi.me/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html" data-id="0x8isiug901ii3vj" data_title="jstack捕获的OOM unable to create new native thread"
+        data_summary="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread
 1
 2
 3
@@ -322,58 +297,30 @@ $ grep tid= thread.log |awk <span class="string">'{print substr($1,2,10)}'</span
 7
 8
 2013-11-22 22:17:..." class="article-share-link">Share</a>
-          
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/技术/">技术</a>
-  </div>
-
-
-          
-<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link label label-primary" href="/tags/jstack/">jstack</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-success" href="/tags/oom/">oom</a></li></ul>
-
-
-        </footer>
+    </li>
+    <li>
       
-    </div>
-  </div>
-</article>
+        <span class="nav-next disabled">Next</span>
+      
+    </li>
+  </ul>
+</div>
 
 
-  
-  
-
-
-
-
-</section>
-        
-          
-<aside id="sidebar">
-  
     
       <div class="widget-wrap">
-    <div id="search-form-wrap">
-      <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="submit" value="&#xF002;" class="search-form-submit"><input type="hidden" name="q" value="site:http://bianzi.me"></form>
-    </div>
+  <div class="post-widget">
+    <i class="fa fa-clock-o"></i>
+    <time datetime="2013-11-26T06:50:52.000Z" itemprop="datePublished">Nov 26 2013</time>
+  </div>
 </div>
 
     
       
   <div class="widget-wrap">
-    <h3 class="widget-title">Recents</h3>
-    <div class="widget">
-      <ul>
-        
-          <li class="recent-list">
-            <a href="/2014/一次意想不到的OOM-of-Zookeeper.html">一次意想不到的OOM of Zookeeper</a>
-          </li>
-        
-          <li class="recent-list">
-            <a href="/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html">jstack捕获的OOM unable to create new native thread</a>
-          </li>
-        
-      </ul>
+    <div class="post-widget">
+      <i class="fa fa-folder"></i>
+      <a class="category-link" href="/categories/技术/">技术<span class="category-count">2</span></a>
     </div>
   </div>
 
@@ -381,18 +328,9 @@ $ grep tid= thread.log |awk <span class="string">'{print substr($1,2,10)}'</span
     
       
   <div class="widget-wrap">
-    <h3 class="widget-title">Links</h3>
-    <div class="widget">
-      <ul>
-        
-         <li class="blogroll">
-           
-             <i class="fa fa-github"></i>
-           
-           <a href="https://github.com/mahuabian" title="Github">Github</a>
-          </li>
-        
-      </ul>
+    <div class="post-widget">
+      <i class="fa fa-tags"></i>
+      <a class="tag-link" href="/tags/jstack/">jstack<span class="tag-count">1</span></a><a class="tag-link" href="/tags/oom/">oom<span class="tag-count">2</span></a>
     </div>
   </div>
 
@@ -432,6 +370,19 @@ $ grep tid= thread.log |awk <span class="string">'{print substr($1,2,10)}'</span
 </nav>
 
     
+<!-- div class="ds-thread" in main selection   -->
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"bianzi"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
 
 
 <script src="//cdnjscn.b0.upaiyun.com/libs/jquery/2.1.1/jquery.min.js"></script>
