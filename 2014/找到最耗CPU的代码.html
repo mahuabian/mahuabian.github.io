@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>找到最耗CPU的代码 | 麻花辫子</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="有时间线上java程序莫名CPU使用率很高，需要进行优化或者排查问题，这个时候需要快速定位到运行的那个线程的和那段代码。面试的时候也偶尔会问起这个问题，还是有些同学不太知道如何操作的。
+本想把这简单的几步做个总结:
+
+top -H -p javapid &gt; top.log 
+jstack  javapid &gt; stack.log
+printf &#39;0x%x\n&#39; thre">
+<meta property="og:type" content="article">
+<meta property="og:title" content="找到最耗CPU的代码">
+<meta property="og:url" content="http://bianzi.me/2014/找到最耗CPU的代码.html">
+<meta property="og:site_name" content="麻花辫子">
+<meta property="og:description" content="有时间线上java程序莫名CPU使用率很高，需要进行优化或者排查问题，这个时候需要快速定位到运行的那个线程的和那段代码。面试的时候也偶尔会问起这个问题，还是有些同学不太知道如何操作的。
+本想把这简单的几步做个总结:
+
+top -H -p javapid &gt; top.log 
+jstack  javapid &gt; stack.log
+printf &#39;0x%x\n&#39; thre">
+<meta property="og:image" content="http://qipa.qiniudn.com/20140721/screenshot_136.png">
+<meta property="og:image" content="http://qipa.qiniudn.com/20140721/screenshot_137.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="找到最耗CPU的代码">
+<meta name="twitter:description" content="有时间线上java程序莫名CPU使用率很高，需要进行优化或者排查问题，这个时候需要快速定位到运行的那个线程的和那段代码。面试的时候也偶尔会问起这个问题，还是有些同学不太知道如何操作的。
+本想把这简单的几步做个总结:
+
+top -H -p javapid &gt; top.log 
+jstack  javapid &gt; stack.log
+printf &#39;0x%x\n&#39; thre">
+  
+    <link rel="alternative" href="/atom.xml" title="麻花辫子" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  
+  <link href="//libs.baidu.com/fontawesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjscn.b0.upaiyun.com/libs/twitter-bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="container">
+    <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="/">麻花辫子</a>
+    <div class="collapse navbar-collapse nav-menu">
+      <ul class="nav navbar-nav">
+      
+        <li>
+          <a href="/archives">
+            <i class="fa fa-archive"></i>
+            Archives
+          </a>
+        </li>
+      
+        <li>
+          <a href="/categories">
+            <i class="fa fa-folder"></i>
+            Categories
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tags">
+            <i class="fa fa-tags"></i>
+            Tags
+          </a>
+        </li>
+      
+        <li>
+          <a href="/wiki">
+            <i class="fa fa-book"></i>
+            Wiki
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <i class="fa fa-user"></i>
+            About
+          </a>
+        </li>
+      
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+          <li><a id="rss-link" href="/atom.xml" title="RSS Feed"><i class="fa fa-rss"></i></a></li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="clearfix"></div>
+
+      <div id='content' class="container">
+
+        <div class="page-header-wrapper">
+          <!--[if lt IE 9]><div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>提示:</strong>您的浏览器版本太低了,建议升级到 <strong><a href="http://windows.microsoft.com/zh-cn/internet-explorer/download-ie" title="IE9">IE9</a></strong> 以上,本站使用<a href="https://www.google.com/intl/zh-CN/chrome/">Chrome浏览器</a>可以获得最好的显示效果.</div><![endif]-->
+          <div class="page-header">
+            <h1 class="title">
+          
+            找到最耗CPU的代码
+          
+            </h1>
+        </div>
+      </div>
+      
+      <section id="main"
+        
+      ><article id="post-3288hzpc2kbrxu5c" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div id="toc"><span class="toc-header">Contents</span><ol class="article-toc"><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#引子"><span class="article-toc-text">引子</span></a></li><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#测试程序"><span class="article-toc-text">测试程序</span></a></li><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#表演开始"><span class="article-toc-text">表演开始</span></a></li><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#总结"><span class="article-toc-text">总结</span></a></li></ol></div><p>有时间线上java程序莫名CPU使用率很高，需要进行优化或者排查问题，这个时候需要快速定位到运行的那个线程的和那段代码。面试的时候也偶尔会问起这个问题，还是有些同学不太知道如何操作的。</p>
+<p>本想把这简单的几步做个总结:</p>
+<ul>
+<li>top -H -p javapid &gt; top.log </li>
+<li>jstack  javapid &gt; stack.log</li>
+<li>printf &#39;0x%x\n&#39; threadId  //top 中 线程id转换为16进制</li>
+<li>less stack.log  查看对应tid= 堆栈信息</li>
+</ul>
+<p>偶然发现一个德国人<code>Saqib Rasul</code>早在2010年就用英语给了个更好的诠释，直接翻译一下。</p>
+<a id="more"></a>
+
+<p>ps: <a href="/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html#ulimit--u-1024">关于进程号线程号的区别</a></p>
+<p>原文地址：<a href="http://code.nomad-labs.com/2010/11/18/identifying-which-java-thread-is-consuming-most-cpu/" target="_blank" rel="external">Identifying which Java Thread is consuming most CPU</a></p>
+<h1 id="引子">引子</h1><p>大多数生产环境中的java应用都使用多线程进行工作。有时候突然出现了疯狂的事情导致你的CPU消耗达到100%，就很难定位到是哪个线程导致的。之前一直这么想，直到有一天一个比我聪明的人告诉了我这能办到。现在我就告诉你怎么做，没准你能利用这个神技征服你的家庭和朋友圈也说不定。</p>
+<h1 id="测试程序">测试程序</h1><p>为了测这玩意，当然需要个测试程序。我为你准备好了，总共就三个类：一个<code>HeavyThread</code>做CPU密集型运算（计算<a href="http://en.wikipedia.org/wiki/MD5" target="_blank" rel="external">MD5</a>），一个<code>LightThread</code>干点轻活（自增，睡觉）。最后是个main程序启动一个重量级线程<code>HeavyThread</code>和多个轻量级的<code>LightThread</code>。代码都在这里:</p>
+<figure class="highlight java"><figcaption><span>HeavyThread.java</span></figcaption><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+</pre></td><td class="code"><pre><span class="keyword">import</span> java.security.MessageDigest;
+<span class="keyword">import</span> java.security.NoSuchAlgorithmException;
+<span class="keyword">import</span> java.util.UUID;
+
+<span class="javadoc">/**
+ * thread that does some heavy lifting
+ *
+ *<span class="javadoctag"> @author</span> srasul
+ *
+ */</span>
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HeavyThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> {</span>
+
+	<span class="keyword">private</span> <span class="keyword">long</span> length;
+
+	<span class="keyword">public</span> <span class="title">HeavyThread</span>(<span class="keyword">long</span> length) {
+		<span class="keyword">this</span>.length = length;
+		<span class="keyword">new</span> Thread(<span class="keyword">this</span>).start();
+	}
+
+	<span class="annotation">@Override</span>
+	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span>() {
+		<span class="keyword">while</span> (<span class="keyword">true</span>) {
+			String data = <span class="string">""</span>;
+
+			<span class="comment">// make some shit up</span>
+			<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; length; i++) {
+				data += UUID.randomUUID().toString();
+			}
+
+			MessageDigest digest;
+			<span class="keyword">try</span> {
+				digest = MessageDigest.getInstance(<span class="string">"MD5"</span>);
+			} <span class="keyword">catch</span> (NoSuchAlgorithmException e) {
+				<span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);
+			}
+
+			<span class="comment">// hash that shit</span>
+			digest.update(data.getBytes());
+		}
+	}
+}
+</pre></td></tr></table></figure>
+
+<figure class="highlight java"><figcaption><span>LightThread.java</span></figcaption><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+</pre></td><td class="code"><pre><span class="keyword">import</span> java.util.Random;
+
+<span class="javadoc">/**
+ * thread that does little work. just count & sleep
+ *
+ *<span class="javadoctag"> @author</span> srasul
+ *
+ */</span>
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LightThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> {</span>
+
+	<span class="keyword">public</span> <span class="title">LightThread</span>() {
+		<span class="keyword">new</span> Thread(<span class="keyword">this</span>).start();
+	}
+
+	<span class="annotation">@Override</span>
+	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span>() {
+		Long l = <span class="number">0</span>l;
+		<span class="keyword">while</span>(<span class="keyword">true</span>) {
+			l++;
+			<span class="keyword">try</span> {
+				Thread.sleep(<span class="keyword">new</span> Random().nextInt(<span class="number">10</span>));
+			} <span class="keyword">catch</span> (InterruptedException e) {
+				e.printStackTrace();
+			}
+			<span class="keyword">if</span>(l == Long.MAX_VALUE) {
+				l = <span class="number">0</span>l;
+			}
+		}
+	}
+}
+</pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="code"><pre><span class="javadoc">/**
+ * start it all
+ *
+ *<span class="javadoctag"> @author</span> srasul
+ *
+ */</span>
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StartThreads</span> {</span>
+
+	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
+		<span class="comment">// lets start 1 heavy ...</span>
+		<span class="keyword">new</span> HeavyThread(<span class="number">1000</span>);
+
+		<span class="comment">// ... and 3 light threads</span>
+		<span class="keyword">new</span> LightThread();
+		<span class="keyword">new</span> LightThread();
+		<span class="keyword">new</span> LightThread();
+	}
+}
+</pre></td></tr></table></figure>
+
+<h1 id="表演开始">表演开始</h1><p>假定你不不知道上面的代码，现在只给你看运行中的程序。突然就一个运行耗CPU 100%的程序交到你手上，让你处理。</p>
+<p>启动这个程序。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+</pre></td><td class="code"><pre>$ ls
+HeavyThread.java  LightThread.java  StartThreads.java
+$ javac *
+$ java StartThreads &
+</pre></td></tr></table></figure>
+现在这个占用100%CPU的程序就跑起来了。top 一下：
+
+<img src="http://qipa.qiniudn.com/20140721/screenshot_136.png" alt="top">
+
+在<code>top</code>交互界面下，同时按下 <code>shift</code> <code>-</code> <code>H</code> 三个键，打开线程展示。<code>top</code>的<code>man</code>文档有记载：
+
+<figure class="highlight log"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre>-H : Threads toggle
+          Starts top <span class="keyword">with</span> the last remembered <span class="literal">'H'</span> state reversed.  <span class="keyword">When</span>
+          this  toggle <span class="keyword">is</span> <span class="keyword">On</span>, <span class="keyword">all</span> individual threads will be displayed.
+          Otherwise, top displays a  summation  <span class="keyword">of</span>  <span class="keyword">all</span>  threads  <span class="keyword">in</span>  a
+          <span class="keyword">process</span>.
+</pre></td></tr></table></figure> 
+
+<p>现在可以在<code>top</code>里面看到线程信息：</p>
+<p><img src="http://qipa.qiniudn.com/20140721/screenshot_137.png" alt="top -H"></p>
+<p>从第一张图可以知道java进程号为<code>28294</code>，用<code>jstack</code>dump一下线程堆栈：</p>
+<figure class="highlight log"><figcaption><span>$ jstack 28924</span></figcaption><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+</pre></td><td class="code"><pre><span class="number">2010</span>-<span class="number">11</span>-<span class="number">18</span> <span class="number">13</span>:<span class="number">05</span>:<span class="number">41</span>
+Full thread dump Java HotSpot(TM) <span class="number">64</span>-Bit Server VM (<span class="number">17.0</span>-b16 mixed mode):
+
+<span class="string">"Attach Listener"</span> daemon prio=<span class="number">10</span> tid=<span class="number">0x0000000040ecb000</span> nid=<span class="number">0x7150</span> waiting on condition [<span class="number">0x0000000000000000</span>]
+   java<span class="preprocessor">.lang</span><span class="preprocessor">.Thread</span><span class="preprocessor">.State</span>: RUNNABLE
+
+<span class="string">"DestroyJavaVM"</span> prio=<span class="number">10</span> tid=<span class="number">0x00007f9a98027800</span> nid=<span class="number">0x70fd</span> waiting on condition [<span class="number">0x0000000000000000</span>]
+   java<span class="preprocessor">.lang</span><span class="preprocessor">.Thread</span><span class="preprocessor">.State</span>: RUNNABLE
+
+.....
+
+<span class="string">"Thread-0"</span> prio=<span class="number">10</span> tid=<span class="number">0x00007f9a98020000</span> nid=<span class="number">0x710a</span> runnable [<span class="number">0x00007f9a9d846000</span>]
+   java<span class="preprocessor">.lang</span><span class="preprocessor">.Thread</span><span class="preprocessor">.State</span>: RUNNABLE
+	at sun<span class="preprocessor">.security</span><span class="preprocessor">.provider</span><span class="preprocessor">.DigestBase</span><span class="preprocessor">.engineReset</span>(DigestBase<span class="preprocessor">.java</span>:<span class="number">139</span>)
+	at sun<span class="preprocessor">.security</span><span class="preprocessor">.provider</span><span class="preprocessor">.DigestBase</span><span class="preprocessor">.engineUpdate</span>(DigestBase<span class="preprocessor">.java</span>:<span class="number">104</span>)
+	at java<span class="preprocessor">.security</span><span class="preprocessor">.MessageDigest</span>$Delegate<span class="preprocessor">.engineUpdate</span>(MessageDigest<span class="preprocessor">.java</span>:<span class="number">538</span>)
+	at java<span class="preprocessor">.security</span><span class="preprocessor">.MessageDigest</span><span class="preprocessor">.update</span>(MessageDigest<span class="preprocessor">.java</span>:<span class="number">293</span>)
+	at sun<span class="preprocessor">.security</span><span class="preprocessor">.provider</span><span class="preprocessor">.SecureRandom</span><span class="preprocessor">.engineNextBytes</span>(SecureRandom<span class="preprocessor">.java</span>:<span class="number">197</span>)
+	- locked &lt;<span class="number">0x00007f9aa457e400</span>&gt; (a sun<span class="preprocessor">.security</span><span class="preprocessor">.provider</span><span class="preprocessor">.SecureRandom</span>)
+	at sun<span class="preprocessor">.security</span><span class="preprocessor">.provider</span><span class="preprocessor">.NativePRNG</span>$RandomIO<span class="preprocessor">.implNextBytes</span>(NativePRNG<span class="preprocessor">.java</span>:<span class="number">257</span>)
+	- locked &lt;<span class="number">0x00007f9aa457e708</span>&gt; (a java<span class="preprocessor">.lang</span><span class="preprocessor">.Object</span>)
+	at sun<span class="preprocessor">.security</span><span class="preprocessor">.provider</span><span class="preprocessor">.NativePRNG</span>$RandomIO<span class="preprocessor">.access</span>$200(NativePRNG<span class="preprocessor">.java</span>:<span class="number">108</span>)
+	at sun<span class="preprocessor">.security</span><span class="preprocessor">.provider</span><span class="preprocessor">.NativePRNG</span><span class="preprocessor">.engineNextBytes</span>(NativePRNG<span class="preprocessor">.java</span>:<span class="number">97</span>)
+	at java<span class="preprocessor">.security</span><span class="preprocessor">.SecureRandom</span><span class="preprocessor">.nextBytes</span>(SecureRandom<span class="preprocessor">.java</span>:<span class="number">433</span>)
+	- locked &lt;<span class="number">0x00007f9aa4582fc8</span>&gt; (a java<span class="preprocessor">.security</span><span class="preprocessor">.SecureRandom</span>)
+	at java<span class="preprocessor">.util</span><span class="preprocessor">.UUID</span><span class="preprocessor">.randomUUID</span>(UUID<span class="preprocessor">.java</span>:<span class="number">162</span>)
+	at HeavyThread<span class="preprocessor">.run</span>(HeavyThread<span class="preprocessor">.java</span>:<span class="number">27</span>)
+	at java<span class="preprocessor">.lang</span><span class="preprocessor">.Thread</span><span class="preprocessor">.run</span>(Thread<span class="preprocessor">.java</span>:<span class="number">619</span>)
+
+<span class="string">"Low Memory Detector"</span> daemon prio=<span class="number">10</span> tid=<span class="number">0x00007f9a98006800</span> nid=<span class="number">0x7108</span> runnable [<span class="number">0x0000000000000000</span>]
+   java<span class="preprocessor">.lang</span><span class="preprocessor">.Thread</span><span class="preprocessor">.State</span>: RUNNABLE
+
+<span class="string">"CompilerThread1"</span> daemon prio=<span class="number">10</span> tid=<span class="number">0x00007f9a98004000</span> nid=<span class="number">0x7107</span> waiting on condition [<span class="number">0x0000000000000000</span>]
+   java<span class="preprocessor">.lang</span><span class="preprocessor">.Thread</span><span class="preprocessor">.State</span>: RUNNABLE
+
+.....
+
+<span class="string">"Reference Handler"</span> daemon prio=<span class="number">10</span> tid=<span class="number">0x0000000040dbd000</span> nid=<span class="number">0x7103</span> <span class="keyword">in</span> Object<span class="preprocessor">.wait</span>() [<span class="number">0x00007f9a9de92000</span>]
+   java<span class="preprocessor">.lang</span><span class="preprocessor">.Thread</span><span class="preprocessor">.State</span>: WAITING (on object monitor)
+	at java<span class="preprocessor">.lang</span><span class="preprocessor">.Object</span><span class="preprocessor">.wait</span>(Native Method)
+	- waiting on &lt;<span class="number">0x00007f9aa4550318</span>&gt; (a java<span class="preprocessor">.lang</span><span class="preprocessor">.ref</span><span class="preprocessor">.Reference</span>$Lock)
+	at java<span class="preprocessor">.lang</span><span class="preprocessor">.Object</span><span class="preprocessor">.wait</span>(Object<span class="preprocessor">.java</span>:<span class="number">485</span>)
+	at java<span class="preprocessor">.lang</span><span class="preprocessor">.ref</span><span class="preprocessor">.Reference</span>$ReferenceHandler<span class="preprocessor">.run</span>(Reference<span class="preprocessor">.java</span>:<span class="number">116</span>)
+	- locked &lt;<span class="number">0x00007f9aa4550318</span>&gt; (a java<span class="preprocessor">.lang</span><span class="preprocessor">.ref</span><span class="preprocessor">.Reference</span>$Lock)
+
+<span class="string">"VM Thread"</span> prio=<span class="number">10</span> tid=<span class="number">0x0000000040db8800</span> nid=<span class="number">0x7102</span> runnable 
+
+<span class="string">"GC task thread#0 (ParallelGC)"</span> prio=<span class="number">10</span> tid=<span class="number">0x0000000040d6e800</span> nid=<span class="number">0x70fe</span> runnable
+ 
+....
+
+JNI global references: <span class="number">910</span>
+</pre></td></tr></table></figure>
+
+<p>从top线程图里可以知道，耗CPU的java线程号为<code>28938</code>，16进制就是<code>0x710A</code>，注意看，在stack dump里面，每个线程有个16进制的nid＝标记。它展示了<code>0x710A</code>这个线程在干啥：</p>
+<figure class="highlight log"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre></td><td class="code"><pre><span class="string">"Thread-0"</span> prio=<span class="number">10</span> tid=<span class="number">0x00007f9a98020000</span> nid=<span class="number">0x710a</span> runnable [<span class="number">0x00007f9a9d846000</span>]
+   java<span class="preprocessor">.lang</span><span class="preprocessor">.Thread</span><span class="preprocessor">.State</span>: RUNNABLE
+	at sun<span class="preprocessor">.security</span><span class="preprocessor">.provider</span><span class="preprocessor">.DigestBase</span><span class="preprocessor">.engineReset</span>(DigestBase<span class="preprocessor">.java</span>:<span class="number">139</span>)
+	at sun<span class="preprocessor">.security</span><span class="preprocessor">.provider</span><span class="preprocessor">.DigestBase</span><span class="preprocessor">.engineUpdate</span>(DigestBase<span class="preprocessor">.java</span>:<span class="number">104</span>)
+	at java<span class="preprocessor">.security</span><span class="preprocessor">.MessageDigest</span>$Delegate<span class="preprocessor">.engineUpdate</span>(MessageDigest<span class="preprocessor">.java</span>:<span class="number">538</span>)
+	at java<span class="preprocessor">.security</span><span class="preprocessor">.MessageDigest</span><span class="preprocessor">.update</span>(MessageDigest<span class="preprocessor">.java</span>:<span class="number">293</span>)
+	at sun<span class="preprocessor">.security</span><span class="preprocessor">.provider</span><span class="preprocessor">.SecureRandom</span><span class="preprocessor">.engineNextBytes</span>(SecureRandom<span class="preprocessor">.java</span>:<span class="number">197</span>)
+	- locked &lt;<span class="number">0x00007f9aa457e400</span>&gt; (a sun<span class="preprocessor">.security</span><span class="preprocessor">.provider</span><span class="preprocessor">.SecureRandom</span>)
+	at sun<span class="preprocessor">.security</span><span class="preprocessor">.provider</span><span class="preprocessor">.NativePRNG</span>$RandomIO<span class="preprocessor">.implNextBytes</span>(NativePRNG<span class="preprocessor">.java</span>:<span class="number">257</span>)
+	- locked &lt;<span class="number">0x00007f9aa457e708</span>&gt; (a java<span class="preprocessor">.lang</span><span class="preprocessor">.Object</span>)
+	at sun<span class="preprocessor">.security</span><span class="preprocessor">.provider</span><span class="preprocessor">.NativePRNG</span>$RandomIO<span class="preprocessor">.access</span>$200(NativePRNG<span class="preprocessor">.java</span>:<span class="number">108</span>)
+	at sun<span class="preprocessor">.security</span><span class="preprocessor">.provider</span><span class="preprocessor">.NativePRNG</span><span class="preprocessor">.engineNextBytes</span>(NativePRNG<span class="preprocessor">.java</span>:<span class="number">97</span>)
+	at java<span class="preprocessor">.security</span><span class="preprocessor">.SecureRandom</span><span class="preprocessor">.nextBytes</span>(SecureRandom<span class="preprocessor">.java</span>:<span class="number">433</span>)
+	- locked &lt;<span class="number">0x00007f9aa4582fc8</span>&gt; (a java<span class="preprocessor">.security</span><span class="preprocessor">.SecureRandom</span>)
+	at java<span class="preprocessor">.util</span><span class="preprocessor">.UUID</span><span class="preprocessor">.randomUUID</span>(UUID<span class="preprocessor">.java</span>:<span class="number">162</span>)
+	at HeavyThread<span class="preprocessor">.run</span>(HeavyThread<span class="preprocessor">.java</span>:<span class="number">27</span>)
+	at java<span class="preprocessor">.lang</span><span class="preprocessor">.Thread</span><span class="preprocessor">.run</span>(Thread<span class="preprocessor">.java</span>:<span class="number">619</span>)
+</pre></td></tr></table></figure>
+
+<p>现在你可以确定是<code>HeavyThread</code>在占用大量CPU。</p>
+<h1 id="总结">总结</h1><ul>
+<li>run top</li>
+<li>press Shift-H to enable Threads View</li>
+<li>get PID of the thread with highest CPU</li>
+<li>convert PID to HEX</li>
+<li>get stack dump of java process</li>
+<li>in stack dump look for thread with the matching HEX PID.</li>
+</ul>
+<p>这里相信大家都看得懂了，就不献丑再翻译了，谢谢！</p>
+
+      
+    </div>
+  </div>
+</article>
+
+<section id="comments">
+  <div class="ds-thread"></div>
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+</section>
+        
+          
+<aside id="sidebar">
+  
+    
+      
+<div class="widget-wrap center">
+  <ul class="pagination">
+    <li>
+      
+        <span class="nav-prev disabled">Prev</span>
+      
+    </li>
+    <li>
+      <a data-url="http://bianzi.me/2014/找到最耗CPU的代码.html" data-id="3288hzpc2kbrxu5c" data_title="找到最耗CPU的代码"
+        data_summary="有时间线上java程序莫名CPU使用率很高，需要进行优化或者排查问题，这个时候需要快速定位到运行的那个线程的和那段代码。面试的时候也偶尔会问起这个问题，还是有些同学不太..." class="article-share-link">Share</a>
+    </li>
+    <li>
+      
+        <a href="/2014/一次意想不到的OOM-of-Zookeeper.html" class="nav-next">Next</a>
+      
+    </li>
+  </ul>
+</div>
+
+
+    
+      <div class="widget-wrap">
+  <div class="post-widget">
+    <i class="fa fa-clock-o"></i>
+    <time datetime="2014-07-21T08:10:49.000Z" itemprop="datePublished">Jul 21 2014</time>
+  </div>
+</div>
+
+    
+      
+  <div class="widget-wrap">
+    <div class="post-widget">
+      <i class="fa fa-folder"></i>
+      <a class="category-link" href="/categories/翻译/">翻译<span class="category-count">1</span></a>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap">
+    <div class="post-widget">
+      <i class="fa fa-tags"></i>
+      <a class="tag-link" href="/tags/cpu/">cpu<span class="tag-count">1</span></a><a class="tag-link" href="/tags/jstack/">jstack<span class="tag-count">2</span></a><a class="tag-link" href="/tags/jvm/">jvm<span class="tag-count">2</span></a><a class="tag-link" href="/tags/top/">top<span class="tag-count">1</span></a>
+    </div>
+  </div>
+
+
+    
+  
+</aside>
+
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer container">
+    <div id="footer-info" class="inner">
+      <a href="/">麻花辫子</a> &copy; 2014 Powered by <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and Theme by <a href="https://github.com/seff/nut" target="_blank">Nut</a>.
+      本站文章采用<a href="http://creativecommons.org/licenses/by/4.0/" title="知识共享署名 4.0 国际许可协议" rel="license" target="_blank">创作共用协议</a>进行许可，遵循“CC BY-NC-SA”
+  </div>
+</footer>
+<a id="gotop" href="#">
+  <i class="fa fa-chevron-up"></i>
+</a>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="[object Object]" class="mobile-nav-link">0</a>
+  
+    <a href="[object Object]" class="mobile-nav-link">1</a>
+  
+    <a href="[object Object]" class="mobile-nav-link">2</a>
+  
+    <a href="[object Object]" class="mobile-nav-link">3</a>
+  
+    <a href="[object Object]" class="mobile-nav-link">4</a>
+  
+</nav>
+
+    
+<!-- div class="ds-thread" in main selection   -->
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"bianzi"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<script src="//cdnjscn.b0.upaiyun.com/libs/jquery/2.1.1/jquery.min.js"></script>
+
+
+<script src="/js/jquery.fitvids.js" type="text/javascript"></script>
+<script src="//cdnjscn.b0.upaiyun.com/libs/twitter-bootstrap/3.1.0/js/bootstrap.min.js"></script>
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>

@@ -3,33 +3,17 @@
 <head>
   <meta charset="utf-8">
   
-  <title>谁是我 | 麻花辫子</title>
+  <title>Category: 翻译 | 麻花辫子</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="不知不觉学java有6年多了，3年前恋上Groovy，2年前恋上Mongo，1年前玩过一把NodeJs。 
-喜欢KISS，喜欢python import this。
-喜欢读点开源代码，如Spring,Netty,Redis。
-喜欢上infoQ，最近关注响应式编程和搜索技术。
-崇尚开源，喜欢上Github，个人主页 https://github.com/mahuabian。
-将来希望能够把自己工作中">
+  <meta name="description">
 <meta property="og:type" content="website">
-<meta property="og:title" content="谁是我">
-<meta property="og:url" content="http://bianzi.me/about/index.html">
+<meta property="og:title" content="麻花辫子">
+<meta property="og:url" content="http://bianzi.me/categories/翻译/">
 <meta property="og:site_name" content="麻花辫子">
-<meta property="og:description" content="不知不觉学java有6年多了，3年前恋上Groovy，2年前恋上Mongo，1年前玩过一把NodeJs。 
-喜欢KISS，喜欢python import this。
-喜欢读点开源代码，如Spring,Netty,Redis。
-喜欢上infoQ，最近关注响应式编程和搜索技术。
-崇尚开源，喜欢上Github，个人主页 https://github.com/mahuabian。
-将来希望能够把自己工作中">
-<meta property="og:image" content="http://qipa.qiniudn.com/20140703/email.gif">
+<meta property="og:description">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="谁是我">
-<meta name="twitter:description" content="不知不觉学java有6年多了，3年前恋上Groovy，2年前恋上Mongo，1年前玩过一把NodeJs。 
-喜欢KISS，喜欢python import this。
-喜欢读点开源代码，如Spring,Netty,Redis。
-喜欢上infoQ，最近关注响应式编程和搜索技术。
-崇尚开源，喜欢上Github，个人主页 https://github.com/mahuabian。
-将来希望能够把自己工作中">
+<meta name="twitter:title" content="麻花辫子">
+<meta name="twitter:description">
   
     <link rel="alternative" href="/atom.xml" title="麻花辫子" type="application/atom+xml">
   
@@ -113,7 +97,9 @@
           <div class="page-header">
             <h1 class="title">
           
-            谁是我
+            
+              翻译
+            
           
             </h1>
         </div>
@@ -121,35 +107,136 @@
       
       <section id="main"
         
-          style="float: none; display: inherit; width: 95% !important; margin: 0 auto;"
-        
-      ><article id="page-6a1kinn9u26ltc9l" class="article article-type-page" itemscope itemprop="blogPost">
+      >
+  
+  
+    <article id="post-3288hzpc2kbrxu5c" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
     
+      <header class="article-header">
+        <i class="fa fa-file-text-o"></i>
+        
+  
+    <h1 class="archive-title" itemprop="name">
+      <a class="article-title" href="/2014/找到最耗CPU的代码.html">找到最耗CPU的代码</a>
+    </h1>
+  
+
+
+        <div class="article-date">
+  <time datetime="2014-07-21T08:10:49.000Z" itemprop="datePublished">Jul 21 2014</time>
+</div>
+
+      </header>
+    
     <div class="article-entry" itemprop="articleBody">
       
-        <p>不知不觉学java有6年多了，3年前恋上Groovy，2年前恋上Mongo，1年前玩过一把NodeJs。 </p>
-<p>喜欢KISS，喜欢python import this。</p>
-<p>喜欢读点开源代码，如Spring,Netty,Redis。</p>
-<p>喜欢上infoQ，最近关注响应式编程和搜索技术。</p>
-<p>崇尚开源，喜欢上Github，个人主页 <a href="https://github.com/mahuabian" target="_blank" rel="external">https://github.com/mahuabian</a>。</p>
-<p>将来希望能够把自己工作中使用的一些小东西分享出去。现在就职于天天动听，主要参与设计了爬虫系统，见证了团队把百万曲库冲到千万，给力！</p>
-<p><img src="http://qipa.qiniudn.com/20140703/email.gif" alt=""></p>
-<!-- div class="ds-thread"></div -->
+        
+          <!--<div class="thumbnail"><img src="http://qipa.qiniudn.com/20140721/screenshot_136.png" alt="top"></div>-->
+          <p>有时间线上java程序莫名CPU使用率很高，需要进行优化或者排查问题，这个时候需要快速定位到运行的那个线程的和那段代码。面试的时候也偶尔会问起这个问题，还是有些同学不太知道如何操作的。</p>
+<p>本想把这简单的几步做个总结:</p>
+<ul>
+<li>top -H -p javapid &gt; top.log </li>
+<li>jstack  javapid &gt; stack.log</li>
+<li>printf &#39;0x%x\n&#39; threadId  //top 中 线程id转换为16进制</li>
+<li>less stack.log  查看对应tid= 堆栈信息</li>
+</ul>
+<p>偶然发现一个德国人<code>Saqib Rasul</code>早在2010年就用英语给了个更好的诠释，直接翻译一下。</p>
+
+          
+            <p class="article-more-link">
+              <a href="/2014/找到最耗CPU的代码.html#more">Read More</a>
+            </p>
+          
+        
+        <footer class="article-footer">
+          <a data-url="http://bianzi.me/2014/找到最耗CPU的代码.html" data-id="3288hzpc2kbrxu5c" data_title="找到最耗CPU的代码"
+          data_summary="有时间线上java程序莫名CPU使用率很高，需要进行优化或者排查问题，这个时候需要快速定位到运行的那个线程的和那段代码。面试的时候也偶尔会问起这个问题，还是有些同学不太..." class="article-share-link">Share</a>
+          
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/翻译/">翻译</a>
+  </div>
 
 
+          
+<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link label label-primary" href="/tags/cpu/">cpu</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-success" href="/tags/jstack/">jstack</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-info" href="/tags/jvm/">jvm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-warning" href="/tags/top/">top</a></li></ul>
 
+
+        </footer>
       
     </div>
   </div>
 </article>
 
 
+  
+  
+
+
+
+
 </section>
         
           
+<aside id="sidebar">
+  
+    
+      <div class="widget-wrap">
+    <div id="search-form-wrap">
+      <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="submit" value="&#xF002;" class="search-form-submit"><input type="hidden" name="q" value="site:http://bianzi.me"></form>
+    </div>
+</div>
+
+    
+      
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li class="recent-list">
+            <a href="/2014/找到最耗CPU的代码.html">找到最耗CPU的代码</a>
+          </li>
+        
+          <li class="recent-list">
+            <a href="/2014/一次意想不到的OOM-of-Zookeeper.html">一次意想不到的OOM of Zookeeper</a>
+          </li>
+        
+          <li class="recent-list">
+            <a href="/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html">jstack捕获的OOM unable to create new native thread</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap">
+    <h3 class="widget-title">Links</h3>
+    <div class="widget">
+      <ul>
+        
+         <li class="blogroll">
+           
+             <i class="fa fa-github"></i>
+           
+           <a href="https://github.com/mahuabian" title="Github">Github</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+    
+  
+</aside>
+
 
         
       </div>
@@ -181,19 +268,6 @@
 </nav>
 
     
-<!-- div class="ds-thread" in main selection   -->
-<script type="text/javascript">
-  var duoshuoQuery = {short_name:"bianzi"};
-  (function() {
-    var ds = document.createElement('script');
-    ds.type = 'text/javascript';ds.async = true;
-    ds.src = '//static.duoshuo.com/embed.js';
-    ds.charset = 'UTF-8';
-    (document.getElementsByTagName('head')[0]
-    || document.getElementsByTagName('body')[0]).appendChild(ds);
-  })();
-</script>
-
 
 
 <script src="//cdnjscn.b0.upaiyun.com/libs/jquery/2.1.1/jquery.min.js"></script>
