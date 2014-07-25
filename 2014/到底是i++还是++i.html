@@ -111,14 +111,14 @@
       
       <section id="main"
         
-      ><article id="post-8y81p1hru4uohmbj" class="article article-type-post" itemscope itemprop="blogPost">
+      ><article id="post-oqzut5eky4c436pw" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
     
     <div class="article-entry" itemprop="articleBody">
       
-        <div id="toc"><span class="toc-header">Contents</span><ol class="article-toc"><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#单纯-i++"><span class="article-toc-text">单纯 i++</span></a></li><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#其实没那么单纯啦"><span class="article-toc-text">其实没那么单纯啦</span></a></li><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#+32"><span class="article-toc-text">+32</span></a></li></ol></div><p>天天动听有道面试题， i++ 和 ++i 哪个更高效 ？</p>
+        <div id="toc"><span class="toc-header">Contents</span><ol class="article-toc"><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#单纯-i++"><span class="article-toc-text">单纯 i++</span></a></li><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#其实没那么单纯啦"><span class="article-toc-text">其实没那么单纯啦</span></a></li><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#+32"><span class="article-toc-text">+32</span></a></li><ol class="article-toc-child"><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#java版"><span class="article-toc-text">java版</span></a></li></ol></div><p>天天动听有道面试题， i++ 和 ++i 哪个更高效 ？</p>
 <p>先不管题目来源(好吧，从哪抄的忘了)，大多数同学只是简单的说了下 ++i 更高效，不用返回旧值，消耗肯定少么有没有！</p>
 <p>我们容易忽略编译器的智商，后来小辫验证了一下，果然小马过河了，没那么简单。大牛止步！！</p>
 <a id="more"></a>
@@ -305,7 +305,96 @@ popq    <span class="variable">%rbp</span>
 <p>这还是没有启用优化的情况下，有兴趣的童学可以自己试试。。</p>
 <p>当我们（大牛无视）还在为这个小问题按照常理出牌的时候，有没有考虑过逗比的编译器的感受？</p>
 <h1 id="+32">+32</h1><p>单纯<code>++</code>的时候可以不纠结了好么，不过重要的还是要<code>知其然知其所以然</code>，这才是逗比精神！！</p>
-<p>不知道java版本的指令会是啥样子 ？大家YY吧 ～</p>
+<h2 id="java版">java版</h2><p>几乎一样的代码</p>
+<figure class="highlight java"><figcaption><span>Test.java</span></figcaption><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="code"><pre><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> {</span>
+
+  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span> (String[] args) {
+
+      <span class="keyword">int</span> a = <span class="number">3</span>;
+      a++;
+      ++a;
+
+      <span class="keyword">int</span> i = <span class="number">3</span>;
+
+      a = i++;
+      a = ++i;
+
+  }
+
+}
+</pre></td></tr></table></figure>
+
+<p>java为了跨平台，是虚拟机“汇编“－－字节码， <code>javap</code>查看</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+</pre></td><td class="code"><pre>$ java -version                                                                                                                                   
+java version <span class="string">"1.8.0_05"</span>
+Java(TM) SE Runtime Environment (build <span class="number">1.8</span>.<span class="number">0</span>_05-b13)
+Java HotSpot(TM) <span class="number">64</span>-Bit Server VM (build <span class="number">25.5</span>-b02, mixed mode)
+$ javac Test.java
+$ javap -v Test
+</pre></td></tr></table></figure>
+
+<figure class="highlight asm"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="code"><pre><span class="built_in">stack</span><span class="subst">=</span><span class="number">1</span>, locals<span class="subst">=</span><span class="number">3</span>, args_size<span class="subst">=</span><span class="number">1</span>
+    <span class="number">0</span>: iconst_3   
+    <span class="number">1</span>: istore_1   <span class="comment">// 把 a 存入本地变量表索引位置为1 </span>
+    <span class="number">2</span>: iinc          <span class="number">1</span>, <span class="number">1</span>   <span class="comment">// a++</span>
+    <span class="number">5</span>: iinc          <span class="number">1</span>, <span class="number">1</span>   <span class="comment">// ++a</span>
+    <span class="number">8</span>: iconst_3
+    <span class="number">9</span>: istore_2   <span class="comment">// 把 i 存入本地变量表索引位置为2</span>
+    
+   <span class="number">10</span>: iload_2             <span class="comment">// 把本地变量表索引2的值(i)放到栈顶，数值为 3</span>
+   <span class="number">11</span>: iinc          <span class="number">2</span>, <span class="number">1</span>  <span class="comment">// 对本地变量表2号数据增加1 ，数值为4</span>
+   <span class="number">14</span>: istore_1            <span class="comment">// 把栈顶int数值（3）存入本地变量表1号位置 ，完成 a = i</span>
+                           <span class="comment">// 11 14 这两行完全可以交换iinc是对栈无影响的操作</span>
+   
+   <span class="number">15</span>: iinc          <span class="number">2</span>, <span class="number">1</span>  <span class="comment">// 继续对本地变量表2号数据增加1 ，数值为5 ， ++i</span>
+   <span class="number">18</span>: iload_2             <span class="comment">// 本地变量表2号位放入栈顶 </span>
+   <span class="number">19</span>: istore_1            <span class="comment">// 栈顶数值存入本地变量1号 a=5</span>
+   
+   <span class="number">20</span>: <span class="keyword">return</span>
+</pre></td></tr></table></figure>
+
+<p>看见没有，单纯版 <code>i++</code> 和 <code>++i</code> 一样逗比，都是 <code>iinc 1,1</code> ；对于赋值的和<code>redhat</code>版<code>gcc</code>表现一致，都是3行指令，顺序不同。</p>
+<p>完。</p>
 
       
     </div>
@@ -335,7 +424,7 @@ popq    <span class="variable">%rbp</span>
       
     </li>
     <li>
-      <a data-url="http://bianzi.me/2014/到底是i++还是++i.html" data-id="8y81p1hru4uohmbj" data_title="到底是i++还是++i"
+      <a data-url="http://bianzi.me/2014/到底是i++还是++i.html" data-id="oqzut5eky4c436pw" data_title="到底是i++还是++i"
         data_summary="天天动听有道面试题， i++ 和 ++i 哪个更高效 ？
 先不管题目来源(好吧，从哪抄的忘了)，大多数同学只是简单的说了下 ++i 更高效，不用返回旧值，消耗肯定少么有没有！
 我们..." class="article-share-link">Share</a>
