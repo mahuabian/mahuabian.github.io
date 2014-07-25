@@ -7,19 +7,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="天天动听有道面试题， i++ 和 ++i 哪个更高效 ？
 先不管题目来源(好吧，从哪抄的忘了)，大多数同学只是简单的说了下 ++i 更高效，不用返回旧值，消耗肯定少么有没有！
-我们容易忽略编译器的智商，后来自己验证了一下，果然小马过河了，没那么简单。">
+我们容易忽略编译器的智商，后来小辫验证了一下，果然小马过河了，没那么简单。大牛止步！！">
 <meta property="og:type" content="article">
 <meta property="og:title" content="到底是i++还是++i">
 <meta property="og:url" content="http://bianzi.me/2014/到底是i++还是++i.html">
 <meta property="og:site_name" content="麻花辫子">
 <meta property="og:description" content="天天动听有道面试题， i++ 和 ++i 哪个更高效 ？
 先不管题目来源(好吧，从哪抄的忘了)，大多数同学只是简单的说了下 ++i 更高效，不用返回旧值，消耗肯定少么有没有！
-我们容易忽略编译器的智商，后来自己验证了一下，果然小马过河了，没那么简单。">
+我们容易忽略编译器的智商，后来小辫验证了一下，果然小马过河了，没那么简单。大牛止步！！">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="到底是i++还是++i">
 <meta name="twitter:description" content="天天动听有道面试题， i++ 和 ++i 哪个更高效 ？
 先不管题目来源(好吧，从哪抄的忘了)，大多数同学只是简单的说了下 ++i 更高效，不用返回旧值，消耗肯定少么有没有！
-我们容易忽略编译器的智商，后来自己验证了一下，果然小马过河了，没那么简单。">
+我们容易忽略编译器的智商，后来小辫验证了一下，果然小马过河了，没那么简单。大牛止步！！">
   
     <link rel="alternative" href="/atom.xml" title="麻花辫子" type="application/atom+xml">
   
@@ -111,7 +111,7 @@
       
       <section id="main"
         
-      ><article id="post-ahz47wva5kdxc0ya" class="article article-type-post" itemscope itemprop="blogPost">
+      ><article id="post-8y81p1hru4uohmbj" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
@@ -120,7 +120,7 @@
       
         <div id="toc"><span class="toc-header">Contents</span><ol class="article-toc"><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#单纯-i++"><span class="article-toc-text">单纯 i++</span></a></li><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#其实没那么单纯啦"><span class="article-toc-text">其实没那么单纯啦</span></a></li><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#+32"><span class="article-toc-text">+32</span></a></li></ol></div><p>天天动听有道面试题， i++ 和 ++i 哪个更高效 ？</p>
 <p>先不管题目来源(好吧，从哪抄的忘了)，大多数同学只是简单的说了下 ++i 更高效，不用返回旧值，消耗肯定少么有没有！</p>
-<p>我们容易忽略编译器的智商，后来自己验证了一下，果然小马过河了，没那么简单。</p>
+<p>我们容易忽略编译器的智商，后来小辫验证了一下，果然小马过河了，没那么简单。大牛止步！！</p>
 <a id="more"></a>
 
 <h1 id="单纯-i++">单纯 i++</h1><p>直接上测试代码，代码行数越少越好维护，有木有！</p>
@@ -131,7 +131,7 @@
 5
 6
 </pre></td><td class="code"><pre><span class="keyword">int</span> main( <span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span>* argv[] ){
-  <span class="keyword">int</span> a=<span class="number">3</span>;
+  <span class="keyword">int</span> a = <span class="number">3</span>;
 
   a++;
   ++a;
@@ -224,7 +224,7 @@ leave
 10
 11
 </pre></td><td class="code"><pre><span class="keyword">int</span> main( <span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span>* argv[] ){
-  <span class="keyword">int</span> a=<span class="number">3</span>;
+  <span class="keyword">int</span> a = <span class="number">3</span>;
 
   a++;
   ++a;
@@ -300,10 +300,10 @@ popq    <span class="variable">%rbp</span>
   leave
 </pre></td></tr></table></figure>
 
-<p>这尼玛逆天了，都是3行，都额外用到一个寄存器，只是顺序不同！！</p>
+<p>这尼玛逆天了，都是3行，都额外用到一个寄存器，只是顺序不同，一个是先赋值之后自增，一个是先自增再赋值！仅仅是<code>2+1</code>和<code>1+2</code>的区别了？？</p>
 <p>ps ： 这是一不小心黑了下<code>LLVM</code>??</p>
 <p>这还是没有启用优化的情况下，有兴趣的童学可以自己试试。。</p>
-<p>当我们还在为这个小问题按照常理出牌的时候，有没有考虑过逗比的编译器的感受？</p>
+<p>当我们（大牛无视）还在为这个小问题按照常理出牌的时候，有没有考虑过逗比的编译器的感受？</p>
 <h1 id="+32">+32</h1><p>单纯<code>++</code>的时候可以不纠结了好么，不过重要的还是要<code>知其然知其所以然</code>，这才是逗比精神！！</p>
 <p>不知道java版本的指令会是啥样子 ？大家YY吧 ～</p>
 
@@ -335,7 +335,7 @@ popq    <span class="variable">%rbp</span>
       
     </li>
     <li>
-      <a data-url="http://bianzi.me/2014/到底是i++还是++i.html" data-id="ahz47wva5kdxc0ya" data_title="到底是i++还是++i"
+      <a data-url="http://bianzi.me/2014/到底是i++还是++i.html" data-id="8y81p1hru4uohmbj" data_title="到底是i++还是++i"
         data_summary="天天动听有道面试题， i++ 和 ++i 哪个更高效 ？
 先不管题目来源(好吧，从哪抄的忘了)，大多数同学只是简单的说了下 ++i 更高效，不用返回旧值，消耗肯定少么有没有！
 我们..." class="article-share-link">Share</a>
