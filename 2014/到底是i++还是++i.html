@@ -111,14 +111,14 @@
       
       <section id="main"
         
-      ><article id="post-oqzut5eky4c436pw" class="article article-type-post" itemscope itemprop="blogPost">
+      ><article id="post-9q5p8zpcsf6aezc0" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
     
     <div class="article-entry" itemprop="articleBody">
       
-        <div id="toc"><span class="toc-header">Contents</span><ol class="article-toc"><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#单纯-i++"><span class="article-toc-text">单纯 i++</span></a></li><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#其实没那么单纯啦"><span class="article-toc-text">其实没那么单纯啦</span></a></li><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#+32"><span class="article-toc-text">+32</span></a></li><ol class="article-toc-child"><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#java版"><span class="article-toc-text">java版</span></a></li></ol></div><p>天天动听有道面试题， i++ 和 ++i 哪个更高效 ？</p>
+        <div id="toc"><span class="toc-header">Contents</span><ol class="article-toc"><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#单纯-i++"><span class="article-toc-text">单纯 i++</span></a></li><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#其实没那么单纯啦"><span class="article-toc-text">其实没那么单纯啦</span></a></li><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#java版"><span class="article-toc-text">java版</span></a></li><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#++32"><span class="article-toc-text">++32</span></a></li></ol></div><p>天天动听有道面试题， i++ 和 ++i 哪个更高效 ？</p>
 <p>先不管题目来源(好吧，从哪抄的忘了)，大多数同学只是简单的说了下 ++i 更高效，不用返回旧值，消耗肯定少么有没有！</p>
 <p>我们容易忽略编译器的智商，后来小辫验证了一下，果然小马过河了，没那么简单。大牛止步！！</p>
 <a id="more"></a>
@@ -211,7 +211,7 @@ leave
 </pre></td></tr></table></figure>
 
 <p>更狠，有木有(一行代码，一行汇编，这是要逆天)，也是完全一样，都是 <code>+1</code>。</p>
-<h1 id="其实没那么单纯啦">其实没那么单纯啦</h1><p>X的，明明就不一样，装什么象啊！不信整不了你，赋个值，别一不小心发现个世纪大BUG。</p>
+<h1 id="其实没那么单纯啦">其实没那么单纯啦</h1><p>X的，明明就不一样！赋个值看看，别一不小心发现个世纪大BUG？！</p>
 <figure class="highlight cpp"><figcaption><span>test.c</span></figcaption><table><tr><td class="gutter"><pre>1
 2
 3
@@ -304,8 +304,7 @@ popq    <span class="variable">%rbp</span>
 <p>ps ： 这是一不小心黑了下<code>LLVM</code>??</p>
 <p>这还是没有启用优化的情况下，有兴趣的童学可以自己试试。。</p>
 <p>当我们（大牛无视）还在为这个小问题按照常理出牌的时候，有没有考虑过逗比的编译器的感受？</p>
-<h1 id="+32">+32</h1><p>单纯<code>++</code>的时候可以不纠结了好么，不过重要的还是要<code>知其然知其所以然</code>，这才是逗比精神！！</p>
-<h2 id="java版">java版</h2><p>几乎一样的代码</p>
+<h1 id="java版">java版</h1><p>几乎一样的代码</p>
 <figure class="highlight java"><figcaption><span>Test.java</span></figcaption><table><tr><td class="gutter"><pre>1
 2
 3
@@ -340,7 +339,7 @@ popq    <span class="variable">%rbp</span>
 }
 </pre></td></tr></table></figure>
 
-<p>java为了跨平台，是虚拟机“汇编“－－字节码， <code>javap</code>查看</p>
+<p>java为了跨平台，是虚拟机“汇编“－－字节码（基于栈实现而非寄存器），<code>javap</code>查看</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre>1
 2
 3
@@ -393,8 +392,9 @@ $ javap -v Test
    <span class="number">20</span>: <span class="keyword">return</span>
 </pre></td></tr></table></figure>
 
-<p>看见没有，单纯版 <code>i++</code> 和 <code>++i</code> 一样逗比，都是 <code>iinc 1,1</code> ；对于赋值的和<code>redhat</code>版<code>gcc</code>表现一致，都是3行指令，顺序不同。</p>
-<p>完。</p>
+<p>单纯版 <code>i++</code> 和 <code>++i</code> 一样，都是 <code>iinc 1,1</code> ；对于赋值的和<code>redhat gcc</code>表现类似，3行指令，顺序不同。</p>
+<h1 id="++32">++32</h1><p>单纯<code>++</code>的时候可以不纠结了好么，不过重要的还是要<code>知其然知其所以然</code>，这才是逗比精神！！</p>
+<p>等一会，到底是 i++ 还是 ++i 呢？</p>
 
       
     </div>
@@ -424,7 +424,7 @@ $ javap -v Test
       
     </li>
     <li>
-      <a data-url="http://bianzi.me/2014/到底是i++还是++i.html" data-id="oqzut5eky4c436pw" data_title="到底是i++还是++i"
+      <a data-url="http://bianzi.me/2014/到底是i++还是++i.html" data-id="9q5p8zpcsf6aezc0" data_title="到底是i++还是++i"
         data_summary="天天动听有道面试题， i++ 和 ++i 哪个更高效 ？
 先不管题目来源(好吧，从哪抄的忘了)，大多数同学只是简单的说了下 ++i 更高效，不用返回旧值，消耗肯定少么有没有！
 我们..." class="article-share-link">Share</a>
