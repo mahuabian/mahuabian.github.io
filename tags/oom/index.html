@@ -110,7 +110,7 @@
       >
   
   
-    <article id="post-satvhaubxy4ezz2p" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-y3t4mgs7n98ojabi" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
@@ -126,7 +126,7 @@
 
 
         <div class="article-date">
-  <time datetime="2014-07-02T07:59:36.000Z" itemprop="datePublished">Jul 2 2014</time>
+  <time datetime="2014-07-01T15:18:58.000Z" itemprop="datePublished">Jul 1 2014</time>
 </div>
 
       </header>
@@ -135,10 +135,10 @@
       
         
           <!--<div class="thumbnail"><img src="http://qipa.qiniudn.com/20140702/memLeak.png" alt="Memory leak when using PathChildrenCache"></div>-->
-          <p>前阵子把搜索项目从 HTTP RPC 迁移到基于<a href="https://github.com/mahuabian/ttpod/tree/master/ttpod-rpc" target="_blank" rel="external">Netty TCP RPC</a> 之后，为了实现服务自动注册，发现功能，开始使用<a href="http://zookeeper.apache.org" target="_blank" rel="external">ZooKeeper</a>。</p>
+          <p>前阵子把搜索项目从 HTTP RPC 迁移到基于<a href="https://github.com/mahuabian/ttpod/tree/master/ttpod-rpc" target="_blank" rel="external">Netty TCP RPC</a> 之后，为了实现服务自动注册，发现功能，开始使用<a href="http://zookeeper.apache.org/" target="_blank" rel="external">ZooKeeper</a>。</p>
 <p>一开始小范围使用zookeeper，简单粗暴基于原生API做了Path Watcher实现了服务自动发现。线上灰量运行半个月，表现稳定，于是打算全部迁移到Netty RPC。但是并不完美，存在一个问题，就是Zookeeper SESSION_EXPIRED(Session 过期)。默认的Zookeeper Client认为session Expired是比较严重的问题，不会重连，导致Client不可用。</p>
 <p>参见官方FAQ：<a href="http://wiki.apache.org/hadoop/ZooKeeper/FAQ#A3" target="_blank" rel="external">How should I handle SESSION_EXPIRED</a></p>
-<p>后面发现 <a href="http://curator.apache.org" target="_blank" rel="external">Apache Curator</a> 完美解决了这个问题，在尽可能减少依赖和解决问题之间，没时间了，选后者！而且提供的几个菜谱的确好用，瞬间替换掉了之前粗暴操作Zookeeper的代码，小渠道上线之后观察了两天，一切正常，于是服务开始全部迁移，OOM噩梦开始。</p>
+<p>后面发现 <a href="http://curator.apache.org/" target="_blank" rel="external">Apache Curator</a> 完美解决了这个问题，在尽可能减少依赖和解决问题之间，没时间了，选后者！而且提供的几个菜谱的确好用，瞬间替换掉了之前粗暴操作Zookeeper的代码，小渠道上线之后观察了两天，一切正常，于是服务开始全部迁移，OOM噩梦开始。</p>
 
           
             <p class="article-more-link">
@@ -147,7 +147,7 @@
           
         
         <footer class="article-footer">
-          <a data-url="http://bianzi.me/2014/一次意想不到的OOM-of-Zookeeper.html" data-id="satvhaubxy4ezz2p" data_title="一次意想不到的OOM of Zookeeper"
+          <a data-url="http://bianzi.me/2014/一次意想不到的OOM-of-Zookeeper.html" data-id="y3t4mgs7n98ojabi" data_title="一次意想不到的OOM of Zookeeper"
           data_summary="前阵子把搜索项目从 HTTP RPC 迁移到基于Netty TCP RPC 之后，为了实现服务自动注册，发现功能，开始使用ZooKeeper。
 一开始小范围使用zookeeper，简单粗暴基于原生API做了..." class="article-share-link">Share</a>
           
@@ -169,7 +169,7 @@
 
 
   
-    <article id="post-l3y6fjsxxklxcjq6" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-0j1x71t5xynm7jid" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
@@ -221,7 +221,7 @@
           
         
         <footer class="article-footer">
-          <a data-url="http://bianzi.me/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html" data-id="l3y6fjsxxklxcjq6" data_title="jstack捕获的OOM unable to create new native thread"
+          <a data-url="http://bianzi.me/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html" data-id="0j1x71t5xynm7jid" data_title="jstack捕获的OOM unable to create new native thread"
           data_summary="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread
 1
 2
@@ -274,6 +274,10 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li class="recent-list">
+            <a href="/2014/到底是i++还是++i.html">到底是i++还是++i:w</a>
+          </li>
         
           <li class="recent-list">
             <a href="/2014/找到最耗CPU的代码.html">找到最耗CPU的代码</a>

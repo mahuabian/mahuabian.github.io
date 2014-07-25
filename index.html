@@ -107,7 +107,66 @@
         
       >
   
-    <article id="post-3288hzpc2kbrxu5c" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-d1lvs4r5cx4uwkzm" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+
+    
+      <header class="article-header">
+        <i class="fa fa-file-text-o"></i>
+        
+  
+    <h1 class="archive-title" itemprop="name">
+      <a class="article-title" href="/2014/到底是i++还是++i.html">到底是i++还是++i:w</a>
+    </h1>
+  
+
+
+        <div class="article-date">
+  <time datetime="2014-07-25T08:18:58.000Z" itemprop="datePublished">Jul 25 2014</time>
+</div>
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+          <!---->
+          <p>天天动听有道面试题， i++ 和 ++i 哪个更高效 ？</p>
+<p>先不管题目来源(好吧，从哪抄的忘了)，大多数同学只是简单的说了下 ++i 更高效，不用返回旧值，消耗肯定少么有没有！</p>
+<p>我们容易忽略编译器的智商，后来自己验证了一下，果然小马过河了，没那么简单。</p>
+
+          
+            <p class="article-more-link">
+              <a href="/2014/到底是i++还是++i.html#more">Read More</a>
+            </p>
+          
+        
+        <footer class="article-footer">
+          <a data-url="http://bianzi.me/2014/到底是i++还是++i.html" data-id="d1lvs4r5cx4uwkzm" data_title="到底是i++还是++i:w"
+          data_summary="天天动听有道面试题， i++ 和 ++i 哪个更高效 ？
+先不管题目来源(好吧，从哪抄的忘了)，大多数同学只是简单的说了下 ++i 更高效，不用返回旧值，消耗肯定少么有没有！
+我们..." class="article-share-link">Share</a>
+          
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/技术/">技术</a>
+  </div>
+
+
+          
+<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link label label-primary" href="/tags/asm/">asm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-success" href="/tags/cpu/">cpu</a></li></ul>
+
+
+        </footer>
+      
+    </div>
+  </div>
+</article>
+
+
+  
+    <article id="post-02yn1yrdidru34t4" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
@@ -149,7 +208,7 @@
           
         
         <footer class="article-footer">
-          <a data-url="http://bianzi.me/2014/找到最耗CPU的代码.html" data-id="3288hzpc2kbrxu5c" data_title="找到最耗CPU的代码"
+          <a data-url="http://bianzi.me/2014/找到最耗CPU的代码.html" data-id="02yn1yrdidru34t4" data_title="找到最耗CPU的代码"
           data_summary="有时间线上java程序莫名CPU使用率很高，需要进行优化或者排查问题，这个时候需要快速定位到运行的那个线程的和那段代码。面试的时候也偶尔会问起这个问题，还是有些同学不太..." class="article-share-link">Share</a>
           
           
@@ -170,7 +229,7 @@
 
 
   
-    <article id="post-satvhaubxy4ezz2p" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-y3t4mgs7n98ojabi" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
@@ -186,7 +245,7 @@
 
 
         <div class="article-date">
-  <time datetime="2014-07-02T07:59:36.000Z" itemprop="datePublished">Jul 2 2014</time>
+  <time datetime="2014-07-01T15:18:58.000Z" itemprop="datePublished">Jul 1 2014</time>
 </div>
 
       </header>
@@ -195,10 +254,10 @@
       
         
           <!--<div class="thumbnail"><img src="http://qipa.qiniudn.com/20140702/memLeak.png" alt="Memory leak when using PathChildrenCache"></div>-->
-          <p>前阵子把搜索项目从 HTTP RPC 迁移到基于<a href="https://github.com/mahuabian/ttpod/tree/master/ttpod-rpc" target="_blank" rel="external">Netty TCP RPC</a> 之后，为了实现服务自动注册，发现功能，开始使用<a href="http://zookeeper.apache.org" target="_blank" rel="external">ZooKeeper</a>。</p>
+          <p>前阵子把搜索项目从 HTTP RPC 迁移到基于<a href="https://github.com/mahuabian/ttpod/tree/master/ttpod-rpc" target="_blank" rel="external">Netty TCP RPC</a> 之后，为了实现服务自动注册，发现功能，开始使用<a href="http://zookeeper.apache.org/" target="_blank" rel="external">ZooKeeper</a>。</p>
 <p>一开始小范围使用zookeeper，简单粗暴基于原生API做了Path Watcher实现了服务自动发现。线上灰量运行半个月，表现稳定，于是打算全部迁移到Netty RPC。但是并不完美，存在一个问题，就是Zookeeper SESSION_EXPIRED(Session 过期)。默认的Zookeeper Client认为session Expired是比较严重的问题，不会重连，导致Client不可用。</p>
 <p>参见官方FAQ：<a href="http://wiki.apache.org/hadoop/ZooKeeper/FAQ#A3" target="_blank" rel="external">How should I handle SESSION_EXPIRED</a></p>
-<p>后面发现 <a href="http://curator.apache.org" target="_blank" rel="external">Apache Curator</a> 完美解决了这个问题，在尽可能减少依赖和解决问题之间，没时间了，选后者！而且提供的几个菜谱的确好用，瞬间替换掉了之前粗暴操作Zookeeper的代码，小渠道上线之后观察了两天，一切正常，于是服务开始全部迁移，OOM噩梦开始。</p>
+<p>后面发现 <a href="http://curator.apache.org/" target="_blank" rel="external">Apache Curator</a> 完美解决了这个问题，在尽可能减少依赖和解决问题之间，没时间了，选后者！而且提供的几个菜谱的确好用，瞬间替换掉了之前粗暴操作Zookeeper的代码，小渠道上线之后观察了两天，一切正常，于是服务开始全部迁移，OOM噩梦开始。</p>
 
           
             <p class="article-more-link">
@@ -207,7 +266,7 @@
           
         
         <footer class="article-footer">
-          <a data-url="http://bianzi.me/2014/一次意想不到的OOM-of-Zookeeper.html" data-id="satvhaubxy4ezz2p" data_title="一次意想不到的OOM of Zookeeper"
+          <a data-url="http://bianzi.me/2014/一次意想不到的OOM-of-Zookeeper.html" data-id="y3t4mgs7n98ojabi" data_title="一次意想不到的OOM of Zookeeper"
           data_summary="前阵子把搜索项目从 HTTP RPC 迁移到基于Netty TCP RPC 之后，为了实现服务自动注册，发现功能，开始使用ZooKeeper。
 一开始小范围使用zookeeper，简单粗暴基于原生API做了..." class="article-share-link">Share</a>
           
@@ -229,7 +288,7 @@
 
 
   
-    <article id="post-l3y6fjsxxklxcjq6" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-0j1x71t5xynm7jid" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
@@ -281,7 +340,7 @@
           
         
         <footer class="article-footer">
-          <a data-url="http://bianzi.me/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html" data-id="l3y6fjsxxklxcjq6" data_title="jstack捕获的OOM unable to create new native thread"
+          <a data-url="http://bianzi.me/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html" data-id="0j1x71t5xynm7jid" data_title="jstack捕获的OOM unable to create new native thread"
           data_summary="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread
 1
 2
@@ -332,7 +391,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <a class="category-link" href="/categories/技术/">技术<span class="category-count">2</span></a><a class="category-link" href="/categories/翻译/">翻译<span class="category-count">1</span></a>
+      <a class="category-link" href="/categories/技术/">技术<span class="category-count">3</span></a><a class="category-link" href="/categories/翻译/">翻译<span class="category-count">1</span></a>
     </div>
   </div>
 
@@ -342,7 +401,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <a class="tag-link" href="/tags/cpu/">cpu<span class="tag-count">1</span></a><a class="tag-link" href="/tags/jstack/">jstack<span class="tag-count">2</span></a><a class="tag-link" href="/tags/jvm/">jvm<span class="tag-count">2</span></a><a class="tag-link" href="/tags/oom/">oom<span class="tag-count">2</span></a><a class="tag-link" href="/tags/top/">top<span class="tag-count">1</span></a><a class="tag-link" href="/tags/zookeeper/">zookeeper<span class="tag-count">1</span></a>
+      <a class="tag-link" href="/tags/asm/">asm<span class="tag-count">1</span></a><a class="tag-link" href="/tags/cpu/">cpu<span class="tag-count">2</span></a><a class="tag-link" href="/tags/jstack/">jstack<span class="tag-count">2</span></a><a class="tag-link" href="/tags/jvm/">jvm<span class="tag-count">2</span></a><a class="tag-link" href="/tags/oom/">oom<span class="tag-count">2</span></a><a class="tag-link" href="/tags/top/">top<span class="tag-count">1</span></a><a class="tag-link" href="/tags/zookeeper/">zookeeper<span class="tag-count">1</span></a>
     </div>
   </div>
 
@@ -352,7 +411,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07">July 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/11">November 2013</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07">July 2014</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/11">November 2013</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 

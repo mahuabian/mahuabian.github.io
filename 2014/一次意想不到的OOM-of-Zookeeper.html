@@ -111,21 +111,21 @@
       
       <section id="main"
         
-      ><article id="post-satvhaubxy4ezz2p" class="article article-type-post" itemscope itemprop="blogPost">
+      ><article id="post-y3t4mgs7n98ojabi" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
     
     <div class="article-entry" itemprop="articleBody">
       
-        <div id="toc"><span class="toc-header">Contents</span><ol class="article-toc"><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#遭遇outofmemoryerror:-metaspace"><span class="article-toc-text">遭遇OutOfMemoryError: Metaspace</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#oom-时而有，时而不常有"><span class="article-toc-text">OOM 时而有，时而不常有</span></a></li><ol class="article-toc-child"><li class="article-toc-item article-toc-level-3"><a class="article-toc-link" href="#无奈之举，启用保姆"><span class="article-toc-text">无奈之举，启用保姆</span></a></li><li class="article-toc-item article-toc-level-3"><a class="article-toc-link" href="#跟踪gc状态，无异常"><span class="article-toc-text">跟踪GC状态，无异常</span></a></li><li class="article-toc-item article-toc-level-3"><a class="article-toc-link" href="#弃用curator"><span class="article-toc-text">弃用Curator</span></a></li><li class="article-toc-item article-toc-level-3"><a class="article-toc-link" href="#分析heapdump"><span class="article-toc-text">分析heapdump</span></a></li><li class="article-toc-item article-toc-level-3"><a class="article-toc-link" href="#转战cpu"><span class="article-toc-text">转战CPU</span></a></li></ol><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#oom不一定是内存不足或泄露"><span class="article-toc-text">OOM不一定是内存不足或泄露</span></a></li></ol></div><p>前阵子把搜索项目从 HTTP RPC 迁移到基于<a href="https://github.com/mahuabian/ttpod/tree/master/ttpod-rpc" target="_blank" rel="external">Netty TCP RPC</a> 之后，为了实现服务自动注册，发现功能，开始使用<a href="http://zookeeper.apache.org" target="_blank" rel="external">ZooKeeper</a>。</p>
+        <div id="toc"><span class="toc-header">Contents</span><ol class="article-toc"><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#遭遇outofmemoryerror:-metaspace"><span class="article-toc-text">遭遇OutOfMemoryError: Metaspace</span></a></li><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#oom-时而有，时而不常有"><span class="article-toc-text">OOM 时而有，时而不常有</span></a></li><ol class="article-toc-child"><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#无奈之举，启用保姆"><span class="article-toc-text">无奈之举，启用保姆</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#跟踪gc状态，无异常"><span class="article-toc-text">跟踪GC状态，无异常</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#弃用curator"><span class="article-toc-text">弃用Curator</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#分析heapdump"><span class="article-toc-text">分析heapdump</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#转战cpu"><span class="article-toc-text">转战CPU</span></a></li></ol><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#oom不一定是内存不足或泄露"><span class="article-toc-text">OOM不一定是内存不足或泄露</span></a></li></ol></div><p>前阵子把搜索项目从 HTTP RPC 迁移到基于<a href="https://github.com/mahuabian/ttpod/tree/master/ttpod-rpc" target="_blank" rel="external">Netty TCP RPC</a> 之后，为了实现服务自动注册，发现功能，开始使用<a href="http://zookeeper.apache.org/" target="_blank" rel="external">ZooKeeper</a>。</p>
 <p>一开始小范围使用zookeeper，简单粗暴基于原生API做了Path Watcher实现了服务自动发现。线上灰量运行半个月，表现稳定，于是打算全部迁移到Netty RPC。但是并不完美，存在一个问题，就是Zookeeper SESSION_EXPIRED(Session 过期)。默认的Zookeeper Client认为session Expired是比较严重的问题，不会重连，导致Client不可用。</p>
 <p>参见官方FAQ：<a href="http://wiki.apache.org/hadoop/ZooKeeper/FAQ#A3" target="_blank" rel="external">How should I handle SESSION_EXPIRED</a></p>
-<p>后面发现 <a href="http://curator.apache.org" target="_blank" rel="external">Apache Curator</a> 完美解决了这个问题，在尽可能减少依赖和解决问题之间，没时间了，选后者！而且提供的几个菜谱的确好用，瞬间替换掉了之前粗暴操作Zookeeper的代码，小渠道上线之后观察了两天，一切正常，于是服务开始全部迁移，OOM噩梦开始。</p>
+<p>后面发现 <a href="http://curator.apache.org/" target="_blank" rel="external">Apache Curator</a> 完美解决了这个问题，在尽可能减少依赖和解决问题之间，没时间了，选后者！而且提供的几个菜谱的确好用，瞬间替换掉了之前粗暴操作Zookeeper的代码，小渠道上线之后观察了两天，一切正常，于是服务开始全部迁移，OOM噩梦开始。</p>
 <a id="more"></a>
 
-<h2 id="遭遇outofmemoryerror:-metaspace">遭遇OutOfMemoryError: Metaspace</h2><p>Metaspace 是JDK8中取代旧的 <a href="http://java.dzone.com/articles/java-8-permgen-metaspace" target="_blank" rel="external">PermGen</a> 的内存空间。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre>1
+<h1 id="遭遇outofmemoryerror:-metaspace">遭遇OutOfMemoryError: Metaspace</h1><p>Metaspace 是JDK8中取代旧的 <a href="http://java.dzone.com/articles/java-8-permgen-metaspace" target="_blank" rel="external">PermGen</a> 的内存空间。</p>
+<figure class="highlight log"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -136,23 +136,23 @@
 9
 10
 11
-</pre></td><td class="code"><pre><span class="number">22</span>:<span class="number">22</span>:<span class="number">13.701</span> ERROR o.a.z.ClientCnxn &lt;Caught unexpected throwable&gt;
-java.lang.OutOfMemoryError: Metaspace
-        at java.lang.ClassLoader.defineClass1(Native Method) ~[na:<span class="number">1.8</span><span class="number">.0</span>_05]
-        at java.lang.ClassLoader.defineClass(ClassLoader.java:<span class="number">760</span>) ~[na:<span class="number">1.8</span><span class="number">.0</span>_05]
-        at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:<span class="number">142</span>) ~[na:<span class="number">1.8</span><span class="number">.0</span>_05]
-        at java.net.URLClassLoader.defineClass(URLClassLoader.java:<span class="number">455</span>) ~[na:<span class="number">1.8</span><span class="number">.0</span>_05]
+</pre></td><td class="code"><pre><span class="number">22</span>:<span class="number">22</span>:<span class="number">13.701</span> ERROR o<span class="preprocessor">.a</span><span class="preprocessor">.z</span><span class="preprocessor">.ClientCnxn</span> &lt;Caught unexpected throwable&gt;
+<span class="label">java.lang.OutOfMemoryError:</span> Metaspace
+        at java<span class="preprocessor">.lang</span><span class="preprocessor">.ClassLoader</span><span class="preprocessor">.defineClass</span>1(Native Method) ~[na:<span class="number">1.8</span><span class="number">.0</span>_05]
+        at java<span class="preprocessor">.lang</span><span class="preprocessor">.ClassLoader</span><span class="preprocessor">.defineClass</span>(ClassLoader<span class="preprocessor">.java</span>:<span class="number">760</span>) ~[na:<span class="number">1.8</span><span class="number">.0</span>_05]
+        at java<span class="preprocessor">.security</span><span class="preprocessor">.SecureClassLoader</span><span class="preprocessor">.defineClass</span>(SecureClassLoader<span class="preprocessor">.java</span>:<span class="number">142</span>) ~[na:<span class="number">1.8</span><span class="number">.0</span>_05]
+        at java<span class="preprocessor">.net</span><span class="preprocessor">.URLClassLoader</span><span class="preprocessor">.defineClass</span>(URLClassLoader<span class="preprocessor">.java</span>:<span class="number">455</span>) ~[na:<span class="number">1.8</span><span class="number">.0</span>_05]
         ......
-        at com.google.common.collect.MapMakerInternalMap$Segment.put(MapMakerInternalMap.java:<span class="number">2526</span>) ~[guava-<span class="number">14.0</span><span class="number">.1</span>.jar:na]
-        at com.google.common.collect.MapMakerInternalMap.putIfAbsent(MapMakerInternalMap.java:<span class="number">3510</span>) ~[guava-<span class="number">14.0</span><span class="number">.1</span>.jar:na]
-        at org.apache.curator.framework.imps.NamespaceWatcherMap.get(NamespaceWatcherMap.java:<span class="number">87</span>) ~[curator-framework-<span class="number">2.4</span><span class="number">.2</span>.jar:na]
-        at org.apache.curator.framework.imps.NamespaceWatcherMap.getNamespaceWatcher(NamespaceWatcherMap.java:<span class="number">77</span>) ~[curator-framework-<span class="number">2.4</span><span class="number">.2</span>.jar:na]
+        at <span class="keyword">com</span><span class="preprocessor">.google</span><span class="preprocessor">.common</span><span class="preprocessor">.collect</span><span class="preprocessor">.MapMakerInternalMap</span>$Segment<span class="preprocessor">.put</span>(MapMakerInternalMap<span class="preprocessor">.java</span>:<span class="number">2526</span>) ~[guava-<span class="number">14.0</span><span class="number">.1</span><span class="preprocessor">.jar</span>:na]
+        at <span class="keyword">com</span><span class="preprocessor">.google</span><span class="preprocessor">.common</span><span class="preprocessor">.collect</span><span class="preprocessor">.MapMakerInternalMap</span><span class="preprocessor">.putIfAbsent</span>(MapMakerInternalMap<span class="preprocessor">.java</span>:<span class="number">3510</span>) ~[guava-<span class="number">14.0</span><span class="number">.1</span><span class="preprocessor">.jar</span>:na]
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.curator</span><span class="preprocessor">.framework</span><span class="preprocessor">.imps</span><span class="preprocessor">.NamespaceWatcherMap</span><span class="preprocessor">.get</span>(NamespaceWatcherMap<span class="preprocessor">.java</span>:<span class="number">87</span>) ~[curator-framework-<span class="number">2.4</span><span class="number">.2</span><span class="preprocessor">.jar</span>:na]
+        at org<span class="preprocessor">.apache</span><span class="preprocessor">.curator</span><span class="preprocessor">.framework</span><span class="preprocessor">.imps</span><span class="preprocessor">.NamespaceWatcherMap</span><span class="preprocessor">.getNamespaceWatcher</span>(NamespaceWatcherMap<span class="preprocessor">.java</span>:<span class="number">77</span>) ~[curator-framework-<span class="number">2.4</span><span class="number">.2</span><span class="preprocessor">.jar</span>:na]
 </pre></td></tr></table></figure>
 
 <p>有堆栈，有谷歌，于是顺利又意外的找到了这里<a href="https://issues.apache.org/jira/browse/CURATOR-105" target="_blank" rel="external">Memory leak when using PathChildrenCache</a></p>
 <p><img src="http://qipa.qiniudn.com/20140702/memLeak.png" alt="Memory leak when using PathChildrenCache"></p>
 <p>发现问题已经FIX状态，赶紧把<code>2.4.2</code>版本升级到了<code>2.5.0</code>，窃以为万事大吉，木想到才刚刚开始。</p>
-<h2 id="oom-时而有，时而不常有">OOM 时而有，时而不常有</h2><p>当运帷同事的报警电话打到你的手机里的一刹那，眩晕没用，淡定的先解决问题，虽然满脑子在想这到底是咋回事？粗略看了下RPC服务两端的日志，由于在框架里面加入了耗时请求统计，发现前端慢请求比较多，而后端服务只有少量慢请求。看来问题可以定位在前端，但一时半会也没有找到病根，只好先用个保姆程序监控下，不然没法子睡觉了，别说看球了。。</p>
+<h1 id="oom-时而有，时而不常有">OOM 时而有，时而不常有</h1><p>当运帷同事的报警电话打到你的手机里的一刹那，眩晕没用，淡定的先解决问题，虽然满脑子在想这到底是咋回事？粗略看了下RPC服务两端的日志，由于在框架里面加入了耗时请求统计，发现前端慢请求比较多，而后端服务只有少量慢请求。看来问题可以定位在前端，但一时半会也没有找到病根，只好先用个保姆程序监控下，不然没法子睡觉了，别说看球了。。</p>
 <figure class="highlight log"><figcaption><span>前端慢请求日志较多，而后端rpc server很少</span></figcaption><table><tr><td class="gutter"><pre>1
 2
 3
@@ -169,7 +169,7 @@ java.lang.OutOfMemoryError: Metaspace
 <span class="number">23</span>:<span class="number">01</span>:<span class="number">12.033</span> INFO[qtp1335050193-<span class="number">456</span>] c<span class="preprocessor">.t</span><span class="preprocessor">.r</span><span class="preprocessor">.w</span><span class="preprocessor">.s</span><span class="preprocessor">.ControllerSupport</span> &lt; slow request : /songs/search ,cost : <span class="number">2031</span> ms &gt;
 </pre></td></tr></table></figure>
 
-<h3 id="无奈之举，启用保姆">无奈之举，启用保姆</h3><figure class="highlight bash"><figcaption><span>crontab * * * * * ~/baby.sh</span></figcaption><table><tr><td class="gutter"><pre>1
+<h2 id="无奈之举，启用保姆">无奈之举，启用保姆</h2><figure class="highlight bash"><figcaption><span>crontab * * * * * ~/baby.sh</span></figcaption><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -188,14 +188,14 @@ curl -m <span class="number">2</span>  <span class="number">127.0</span>.<span c
 </pre></td></tr></table></figure>
 
 <p>同时，让虚拟机dump出事故现场。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+<figure class="highlight log"><table><tr><td class="gutter"><pre>1
 2
-</pre></td><td class="code"><pre><span class="keyword">export</span> JAVA_OPTIONS=<span class="string">"-Xms4g -Xmx5g -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m -XX:+UnlockDiagnosticVMOptions \
--XX:+HeapDumpOnOutOfMemoryError  -XX:HeapDumpPath=/home/ttpod/ -XX:+PrintFlagsFinal"</span>
+</pre></td><td class="code"><pre>export JAVA_OPTIONS="-Xms4g -Xmx5g -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m -XX:+UnlockDiagnosticVMOptions \
+-<span class="ruby"><span class="constant">XX</span><span class="symbol">:+HeapDumpOnOutOfMemoryError</span>  -<span class="constant">XX</span><span class="symbol">:HeapDumpPath=/home/ttpod/</span> -<span class="constant">XX</span><span class="symbol">:+PrintFlagsFinal<span class="string">"</span></span></span>
 </pre></td></tr></table></figure>
 
-<p>怪事开始发生，两台机器同样配置，一台偶尔出现<code>java_pid*.hprof</code>，另一台只出现过一次（估计在OOM之前就开始响应变慢，被<code>baby.sh</code>重启了；更奇怪的是在出现hprof的log里面，有时候又搜索不到<code>OutOfMemory</code>字样。在有OutOfMemory字样的log里面，还是出现了<code>java.lang.OutOfMemoryError: Metaspace</code></p>
-<h3 id="跟踪gc状态，无异常">跟踪GC状态，无异常</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre>1
+<p>怪事开始发生，两台机器同样配置，一台偶尔出现<code>java_pid*.hprof</code>，另一台只出现过一次（估计在OOM之前就开始响应变慢，被<code>baby.sh</code>重启了；更奇怪的是在出现<code>hprof</code>的log里面，有时候又搜索不到OutOfMemory字样。在有<code>OutOfMemory</code>字样的log里面，还是出现了<code>java.lang.OutOfMemoryError: Metaspace</code></p>
+<h2 id="跟踪gc状态，无异常">跟踪GC状态，无异常</h2><figure class="highlight log"><table><tr><td class="gutter"><pre>1
 2
 3
 4
@@ -203,16 +203,16 @@ curl -m <span class="number">2</span>  <span class="number">127.0</span>.<span c
 6
 7
 </pre></td><td class="code"><pre>$ jstat -gccause  -h5  <span class="number">26525</span> <span class="number">9000</span>
-S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT    LGCC                 GCC
+S0     S1     <span class="keyword">E</span>      <span class="keyword">O</span>      M     CCS    YGC     YGCT    FGC    FGCT     GCT    LGCC                 GCC
   <span class="number">0.00</span>  <span class="number">77.30</span>  <span class="number">52.42</span>  <span class="number">15.89</span>  <span class="number">74.95</span>  <span class="number">64.52</span>   <span class="number">8847</span> <span class="number">6605.844</span>   <span class="number">362</span>  <span class="number">989.871</span> <span class="number">7595.715</span> Allocation Failure   No GC
  <span class="number">70.31</span>   <span class="number">0.00</span>   <span class="number">6.81</span>  <span class="number">15.93</span>  <span class="number">75.00</span>  <span class="number">64.77</span>   <span class="number">8848</span> <span class="number">6607.145</span>   <span class="number">362</span>  <span class="number">989.871</span> <span class="number">7597.016</span> Allocation Failure   No GC
-  <span class="number">0.00</span>  <span class="number">61.72</span>   <span class="number">0.00</span>  <span class="number">15.97</span>  <span class="number">75.12</span>  <span class="number">64.92</span>   <span class="number">8849</span> <span class="number">6608.452</span>   <span class="number">363</span>  <span class="number">989.871</span> <span class="number">7598.324</span> Metadata GC Threshold Metadata GC Threshold
+  <span class="number">0.00</span>  <span class="number">61.72</span>   <span class="number">0.00</span>  <span class="number">15.97</span>  <span class="number">75.12</span>  <span class="number">64.92</span>   <span class="number">8849</span> <span class="number">6608.452</span>   <span class="number">363</span>  <span class="number">989.871</span> <span class="number">7598.324</span> Metadata GC <span class="keyword">Threshold</span> Metadata GC <span class="keyword">Threshold</span>
  <span class="number">99.78</span>   <span class="number">0.00</span> <span class="number">100.00</span>  <span class="number">20.73</span>  <span class="number">34.36</span>   <span class="number">9.08</span>   <span class="number">8850</span> <span class="number">6608.452</span>   <span class="number">363</span>  <span class="number">994.359</span> <span class="number">7602.811</span> Allocation Failure   Allocation Failure
  <span class="number">99.78</span>   <span class="number">0.00</span>  <span class="number">71.99</span>  <span class="number">20.73</span>  <span class="number">34.51</span>   <span class="number">9.24</span>   <span class="number">8850</span> <span class="number">6610.246</span>   <span class="number">363</span>  <span class="number">994.359</span> <span class="number">7604.605</span> Allocation Failure   No GC
 </pre></td></tr></table></figure>
 
-<p>跟踪了半个多小时，没有发现哪个区域回收之后内存逐步变大；尝试加大了MetaSpacheSize，仍然每天都会产生<code>cry.log</code>(保姆重启)。</p>
-<h3 id="弃用curator">弃用Curator</h3><p>官方MemLeak没影响之前版本，难道2.5.0没有解决好？去看了下作者修复代码:</p>
+<p>跟踪了半个多小时，没有发现哪个区域回收之后内存逐步变大；尝试加大了<code>MetaSpaceSize</code>，仍然每天都会产生<code>cry.log</code>(保姆重启)。</p>
+<h2 id="弃用curator">弃用Curator</h2><p>官方MemLeak没影响之前版本，难道2.5.0没有解决好？去看了下作者修复代码:</p>
 <p><a href="https://github.com/apache/curator/commit/9b9b9ae96c9c5fa423b263aba3768fc16c77a794" target="_blank" rel="external">github : Nulling the watchers seems to help free more memory, I&#39;m not sure why yet</a></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre>1
 2
@@ -228,10 +228,10 @@ childrenWatcher = <span class="keyword">null</span>;
 dataWatcher = <span class="keyword">null</span>;
 </pre></td></tr></table></figure>
 
-<p>于是尝试使用了<code>2.4.0</code>版本的Curator，<code>cry</code>依旧。恢复到不用Curator的版本(暂时不用服务自动发现功能)，还是<code>cry</code>，me too~~</p>
-<h3 id="分析heapdump">分析heapdump</h3><p>由于发生dump的日志中不是每次都能查找到OOM对象，于是祭出jvisualvm分析。同时也用Eclipse MAT 进行了分析，但是MAT给出的leak可疑对象都是正常的业务缓存，线程也没有出现多个竞争一把锁的状态，唯一比较奇怪的是分配给JVM 5GB的内存，dump文件确一直在800MB左右。 </p>
-<p><img src="http://qipa.qiniudn.com/20140702/visualvm.png" alt="visualvm OutOfMemoryError"></p>
-<p>从里面的OOM对象可以看出各种状态下的OOM都出来了，结合<code>cry</code>时刻的日志，都会出现：</p>
+<p>于是尝试使用了<code>2.4.0</code>版本的Curator，cry依旧。恢复到不用Curator的版本(暂时不用服务自动发现功能)，还是<code>cry</code>，me too 😭 ！</p>
+<h2 id="分析heapdump">分析heapdump</h2><p>由于发生dump的日志中不是每次都能查找到OOM对象，于是祭出jvisualvm分析。同时也用Eclipse MAT 进行了分析，但是MAT给出的leak可疑对象都是正常的业务缓存，线程也没有出现多个竞争一把锁的状态，唯一比较奇怪的是分配给JVM 5GB的内存，dump文件确一直在800MB左右。</p>
+<p><img src="http://qipa.qiniudn.com/20140702/visualvm.png" alt="visualvm OOMDump"></p>
+<p>从里面的OOM对象可以看出各种状态下的OOM都出来了，结合<code>cry</code>时刻的日志，都会出现</p>
 <figure class="highlight log"><table><tr><td class="gutter"><pre>1
 2
 3
@@ -242,19 +242,12 @@ dataWatcher = <span class="keyword">null</span>;
 <span class="number">22</span>:<span class="number">36</span>:<span class="number">05.085</span> INFOo.<span class="operator">a</span>.z.ClientCnxn &lt;Session establishment complete <span class="command"><span class="keyword">on</span> <span class="title">server</span> <span class="title">10</span><span class="number">.0</span><span class="number">.5</span><span class="number">.71</span>/<span class="title">10</span><span class="number">.0</span><span class="number">.5</span><span class="number">.71</span>:<span class="title">2181</span>, <span class="title">sessionid</span> = <span class="title">0x346920853d10712</span>, <span class="title">negotiated</span> <span class="title">timeout</span> = <span class="title">5000</span>&gt;</span>
 </pre></td></tr></table></figure>
 
-<h3 id="转战cpu">转战CPU</h3><p>难道Zookeeper重连的时候有猫腻?果断打开<code>zabbix</code>监控平台，查看<code>cry</code>时间点CPU负载，马脚露出：</p>
+<h2 id="转战cpu">转战CPU</h2><p>难道Zookeeper重连的时候有猫腻?果断打开<code>zabbix</code>监控平台，查看<code>cry</code>时间点CPU负载，马脚露出：</p>
 <p><img src="http://qipa.qiniudn.com/20140702/cpuHigh.png" alt="zookeeper重连时CPU负载增大"></p>
 <p>Zookeeper重连会抢占大量CPU？？谷歌找答案，发现：</p>
 <p><a href="http://qnalist.com/questions/4974585/high-cpu-usage-on-zookeeper-clients-when-cluster-is-down" target="_blank" rel="external">High CPU Usage On Zookeeper Clients When Cluster Is Down</a></p>
 <blockquote>
-<p>Each zookeeper client attempts to connect to each of the 9 nodes listed in
-the zookeeper cluster, in succession.    If the connection fails to all hosts
-it will wait 1 second before trying again.    So every second I&#39;ve got 180
-attempted connections on one host.    I already had a problem with the
-zookeeper cluster being down, now the clients are creating excessive load
-as well compounding the issue.
-This is the code which I&#39;ve narrowed it down to.    Unfortunately the 1
-second delay between attempts is hard coded.</p>
+<p>Each zookeeper client attempts to connect to each of the 9 nodes listed in the zookeeper cluster, in succession. If the connection fails to all hosts it will wait 1 second before trying again. So every second I&#39;ve got 180 attempted connections on one host. I already had a problem with the zookeeper cluster being down, now the clients are creating excessive load as well compounding the issue. This is the code which I&#39;ve narrowed it down to. Unfortunately the 1 second delay between attempts is hard coded.</p>
 </blockquote>
 <p><a href="https://github.com/apache/zookeeper/blob/release-3.4.6/src/java/main/org/apache/zookeeper/ClientCnxn.java#L940" target="_blank" rel="external">org/apache/zookeeper/ClientCnxn.java#L940</a></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre>1
@@ -274,14 +267,16 @@ second delay between attempts is hard coded.</p>
         rwServerAddress = <span class="keyword">null</span>;
     } <span class="keyword">else</span> {
         addr = hostProvider.next(<span class="number">1000</span>);
-    }
+}
 </pre></td></tr></table></figure>
 
 <p>原文讨论区有人给了建议解决方案，大意是随机分散间隔时间以降低并发：</p>
 <blockquote>
-<p>I&#39;d say that some randomness added here would help.<br>E.g. to use 700-1300 ms instead of hard coded one second.<br>2014-06-19 18:14 GMT-04:00 Luke Stephenson :</p>
+<p>I&#39;d say that some randomness added here would help.
+E.g. to use 700-1300 ms instead of hard coded one second.
+2014-06-19 18:14 GMT-04:00 Luke Stephenson :</p>
 </blockquote>
-<p>果然，对于一般CPU相对没那么密集的服务而言，重连时候的这点CPU抢占不会造成太大影响，而对于搜索服务而言，CPU有一定负载，对额外的抢占相对敏感。CPU负载过高，肯定导致响应变慢，GC也无法正常进行了？此时恰巧发生GC的话，有可能导致GC Thread无法利用CPU及时完成，导致OOM被抛出。这也解释了dump时而有，时而不常有的问题，如果响应变慢的时候没有GC发生，那么已经被保姆重启了，就不会产生OOM假象（以上纯属本人意淫，如有雷同，纯属巧合）。</p>
+<p>果然，对于一般CPU相对没那么密集的服务而言，重连时候的这点CPU抢占不会造成太大影响，而对于搜索服务而言，CPU有一定负载，对额外的抢占相对敏感。CPU负载过高，肯定导致响应变慢，GC也无法正常进行了？此时恰巧发生GC的话，有可能导致<code>GC Thread</code>无法利用CPU及时完成，导致OOM被抛出。这也解释了dump时而有，时而不常有的问题，如果响应变慢的时候没有GC发生，那么已经被保姆重启了，就不会产生OOM假象（以上纯属本人意淫，如有雷同，纯属巧合）。</p>
 <p><code>cry</code>了这么久，终于有了方向和思路，于是准备验证上述想法。最简单的是把其中一台服务彻底先不依赖Zookeeper，把相关需求暂时hard code or 替代实现，终于到了程序员喜闻乐见的测试、打包、上线阶段，心中一阵暗喜。OK，baby暂时可以不用重启了，但是还要监控，万一有问题，给自己发条短信：</p>
 <figure class="highlight bash"><figcaption><span>baby.sh</span></figcaption><table><tr><td class="gutter"><pre>1
 2
@@ -295,10 +290,10 @@ second delay between attempts is hard coded.</p>
 <span class="keyword">fi</span>
 </pre></td></tr></table></figure>
 
+
 <p>24小时过去了，又24小时过去了....</p>
 <p>终于没有了<code>cry</code> 服务监控一切正常！！！</p>
-<h2 id="oom不一定是内存不足或泄露">OOM不一定是内存不足或泄露</h2><p>内牛满面啊，OOM，不是内存不足，是CPU不足哦亲，你想到了吗？
-至少我没想到－纪念这次意想不到的OutOfMemoryError...</p>
+<h1 id="oom不一定是内存不足或泄露">OOM不一定是内存不足或泄露</h1><p>内牛满面啊，OOM，不是内存不足，是CPU不足哦亲，你想到了吗？ 至少我没想到－纪念这次意想不到的OutOfMemoryError...</p>
 
       
     </div>
@@ -328,7 +323,7 @@ second delay between attempts is hard coded.</p>
       
     </li>
     <li>
-      <a data-url="http://bianzi.me/2014/一次意想不到的OOM-of-Zookeeper.html" data-id="satvhaubxy4ezz2p" data_title="一次意想不到的OOM of Zookeeper"
+      <a data-url="http://bianzi.me/2014/一次意想不到的OOM-of-Zookeeper.html" data-id="y3t4mgs7n98ojabi" data_title="一次意想不到的OOM of Zookeeper"
         data_summary="前阵子把搜索项目从 HTTP RPC 迁移到基于Netty TCP RPC 之后，为了实现服务自动注册，发现功能，开始使用ZooKeeper。
 一开始小范围使用zookeeper，简单粗暴基于原生API做了..." class="article-share-link">Share</a>
     </li>
@@ -345,7 +340,7 @@ second delay between attempts is hard coded.</p>
       <div class="widget-wrap">
   <div class="post-widget">
     <i class="fa fa-clock-o"></i>
-    <time datetime="2014-07-02T07:59:36.000Z" itemprop="datePublished">Jul 2 2014</time>
+    <time datetime="2014-07-01T15:18:58.000Z" itemprop="datePublished">Jul 1 2014</time>
   </div>
 </div>
 
@@ -354,7 +349,7 @@ second delay between attempts is hard coded.</p>
   <div class="widget-wrap">
     <div class="post-widget">
       <i class="fa fa-folder"></i>
-      <a class="category-link" href="/categories/技术/">技术<span class="category-count">2</span></a>
+      <a class="category-link" href="/categories/技术/">技术<span class="category-count">3</span></a>
     </div>
   </div>
 
