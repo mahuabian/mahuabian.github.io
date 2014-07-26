@@ -5,45 +5,15 @@
   
   <title>jstack捕获的OOM unable to create new native thread | 麻花辫子</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread
-1
-2
-3
-4
-5
-6
-7
-8
-2013-11-22 22:17:00.338:WARN:oejut.QueuedThreadPool:qtp785307846-8002: 
-jav">
+  <meta name="description" content="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread">
 <meta property="og:type" content="article">
 <meta property="og:title" content="jstack捕获的OOM unable to create new native thread">
 <meta property="og:url" content="http://bianzi.me/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html">
 <meta property="og:site_name" content="麻花辫子">
-<meta property="og:description" content="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread
-1
-2
-3
-4
-5
-6
-7
-8
-2013-11-22 22:17:00.338:WARN:oejut.QueuedThreadPool:qtp785307846-8002: 
-jav">
+<meta property="og:description" content="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="jstack捕获的OOM unable to create new native thread">
-<meta name="twitter:description" content="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread
-1
-2
-3
-4
-5
-6
-7
-8
-2013-11-22 22:17:00.338:WARN:oejut.QueuedThreadPool:qtp785307846-8002: 
-jav">
+<meta name="twitter:description" content="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread">
   
     <link rel="alternative" href="/atom.xml" title="麻花辫子" type="application/atom+xml">
   
@@ -135,7 +105,7 @@ jav">
       
       <section id="main"
         
-      ><article id="post-9ny06kjo8qs818qe" class="article article-type-post" itemscope itemprop="blogPost">
+      ><article id="post-msbkuez7htay7jil" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
@@ -143,6 +113,10 @@ jav">
     <div class="article-entry" itemprop="articleBody">
       
         <div id="toc"><span class="toc-header">Contents</span><ol class="article-toc"><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#unable-to-create-new-native-thread"><span class="article-toc-text">unable to create new native thread</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#ulimit--u-1024"><span class="article-toc-text">ulimit -u 1024</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#线程泄露"><span class="article-toc-text">线程泄露</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#代码定位"><span class="article-toc-text">代码定位</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#解决上线"><span class="article-toc-text">解决上线</span></a></li></ol></div><h2 id="unable-to-create-new-native-thread">unable to create new native thread</h2><p>最近线上一个solr程序总是在两三天之后出现<code>OutOfMemoryError</code>: unable to create new native thread</p>
+<a id="more"></a>
+
+
+
 <figure class="highlight log"><table><tr><td class="gutter"><pre>1
 2
 3
@@ -161,7 +135,6 @@ jav">
         at java<span class="preprocessor">.lang</span><span class="preprocessor">.Thread</span><span class="preprocessor">.run</span>(Thread<span class="preprocessor">.java</span>:<span class="number">722</span>)
 </pre></td></tr></table></figure>
 
-<a id="more"></a>
 
 <h2 id="ulimit--u-1024">ulimit -u 1024</h2><p>顺藤摸瓜，不能创建新线程，而系统内存只用了一半不到，先看了下系统限制 :</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre>1
@@ -288,8 +261,12 @@ $ grep tid= thread.log |awk <span class="string">'{print substr($1,2,10)}'</span
       
     </li>
     <li>
-      <a data-url="http://bianzi.me/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html" data-id="9ny06kjo8qs818qe" data_title="jstack捕获的OOM unable to create new native thread"
+      <a data-url="http://bianzi.me/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html" data-id="msbkuez7htay7jil" data_title="jstack捕获的OOM unable to create new native thread"
         data_summary="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread
+
+
+
+
 1
 2
 3
@@ -298,7 +275,7 @@ $ grep tid= thread.log |awk <span class="string">'{print substr($1,2,10)}'</span
 6
 7
 8
-2013-11-22 22:17:..." class="article-share-link">Share</a>
+2013-11-22 22..." class="article-share-link">Share</a>
     </li>
     <li>
       
