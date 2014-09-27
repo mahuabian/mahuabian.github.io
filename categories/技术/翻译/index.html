@@ -8,7 +8,7 @@
   <meta name="description">
 <meta property="og:type" content="website">
 <meta property="og:title" content="辫辫">
-<meta property="og:url" content="http://bianzi.me/categories/翻译/">
+<meta property="og:url" content="http://bianzi.me/categories/技术/翻译/">
 <meta property="og:site_name" content="辫辫">
 <meta property="og:description">
 <meta name="twitter:card" content="summary">
@@ -110,7 +110,7 @@
       >
   
   
-    <article id="post-798ml5rici99dpoc" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-y4rlf2nbe1zntajo" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
@@ -120,13 +120,13 @@
         
   
     <h1 class="archive-title" itemprop="name">
-      <a class="article-title" href="/2014/找到最耗CPU的代码.html">找到最耗CPU的代码</a>
+      <a class="article-title" href="/2014/TCP三次握手童叟无欺版.html">TCP三次握手童叟无欺版</a>
     </h1>
   
 
 
         <div class="article-date">
-  <time datetime="2014-07-21T08:10:49.000Z" itemprop="datePublished">Jul 21 2014</time>
+  <time datetime="2014-09-23T14:59:40.000Z" itemprop="datePublished">Sep 23 2014</time>
 </div>
 
       </header>
@@ -134,35 +134,29 @@
     <div class="article-entry" itemprop="articleBody">
       
         
-          <!--<div class="thumbnail"><img src="http://qipa.qiniudn.com/20140721/screenshot_136.png" alt="top"></div>-->
-          <p>有时间线上java程序莫名CPU使用率很高，需要进行优化或者排查问题，这个时候需要快速定位到运行的那个线程的和那段代码。面试的时候也偶尔会问起这个问题，还是有些同学不太知道如何操作的。</p>
-<p>本想把这简单的几步做个总结:</p>
-<ul>
-<li>top -H -p javapid  // 记住最繁忙的pid</li>
-<li>jstack  javapid &gt; stack.log</li>
-<li>printf &#39;0x%x\n&#39; threadId  //top 中 pid转换为16进制</li>
-<li>less stack.log  查看对应tid= 堆栈信息</li>
-</ul>
-<p>偶然发现一个德国人<code>Saqib Rasul</code>早在2010年就用英语给了个更好的诠释，直接翻译一下。</p>
+          <!--<div class="thumbnail"><img src="http://qipa.qiniudn.com/20140927/frame.png" alt="Data Frame"></div>-->
+          <p>对于TCP的“三次握手”建立连接，相信大家都不陌生。但TCP也是一个既古老又复杂的协议，一些细节自己也很难说清楚。理论结合实践，通过一次抓包分析，可以加深理解和记忆。</p>
+<p>Ethernet frame、IP、TCP，它们是什么关系？</p>
+<p>SYN、ACK、FIN，分别代表什么含义？</p>
 
           
             <p class="article-more-link">
-              <a href="/2014/找到最耗CPU的代码.html#more">Read More</a>
+              <a href="/2014/TCP三次握手童叟无欺版.html#more">Read More</a>
             </p>
           
         
         <footer class="article-footer">
-          <a data-url="http://bianzi.me/2014/找到最耗CPU的代码.html" data-id="798ml5rici99dpoc" data_title="找到最耗CPU的代码"
-          data_summary="有时间线上java程序莫名CPU使用率很高，需要进行优化或者排查问题，这个时候需要快速定位到运行的那个线程的和那段代码。面试的时候也偶尔会问起这个问题，还是有些同学不太..." class="article-share-link">Share</a>
+          <a data-url="http://bianzi.me/2014/TCP三次握手童叟无欺版.html" data-id="y4rlf2nbe1zntajo" data_title="TCP三次握手童叟无欺版"
+          data_summary="对于TCP的“三次握手”建立连接，相信大家都不陌生。但TCP也是一个既古老又复杂的协议，一些细节自己也很难说清楚。理论结合实践，通过一次抓包分析，可以加深理解和记忆。..." class="article-share-link">Share</a>
           
           
   <div class="article-category">
-    <a class="article-category-link" href="/categories/翻译/">翻译</a>
+    <a class="article-category-link" href="/categories/技术/">技术</a>/<a class="article-category-link" href="/categories/技术/翻译/">翻译</a>
   </div>
 
 
           
-<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link label label-primary" href="/tags/cpu/">cpu</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-success" href="/tags/jstack/">jstack</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-info" href="/tags/jvm/">jvm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-warning" href="/tags/top/">top</a></li></ul>
+<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link label label-primary" href="/tags/tcp/">tcp</a></li></ul>
 
 
         </footer>

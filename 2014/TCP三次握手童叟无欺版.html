@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>TCP三次握手童叟无欺版 | 辫辫</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="对于TCP的“三次握手”建立连接，相信大家都不陌生。但TCP也是一个既古老又复杂的协议，一些细节自己也很难说清楚。理论结合实践，通过一次抓包分析，可以加深理解和记忆。
+Ethernet frame、IP、TCP，它们是什么关系？
+SYN、ACK、FIN，分别代表什么含义？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TCP三次握手童叟无欺版">
+<meta property="og:url" content="http://bianzi.me/2014/TCP三次握手童叟无欺版.html">
+<meta property="og:site_name" content="辫辫">
+<meta property="og:description" content="对于TCP的“三次握手”建立连接，相信大家都不陌生。但TCP也是一个既古老又复杂的协议，一些细节自己也很难说清楚。理论结合实践，通过一次抓包分析，可以加深理解和记忆。
+Ethernet frame、IP、TCP，它们是什么关系？
+SYN、ACK、FIN，分别代表什么含义？">
+<meta property="og:image" content="http://qipa.qiniudn.com/20140927/frame.png">
+<meta property="og:image" content="http://qipa.qiniudn.com/20140927/1400px-Ethernet_Type_II_Frame_format.svg.png">
+<meta property="og:image" content="http://qipa.qiniudn.com/20140927/Ethernet_II.png">
+<meta property="og:image" content="http://qipa.qiniudn.com/20140927/IP.png">
+<meta property="og:image" content="http://nmap.org/book/images/hdr/MJB-TCP-Header-800x564.png">
+<meta property="og:image" content="http://qipa.qiniudn.com/20140927/TCP.png">
+<meta property="og:image" content="http://qipa.qiniudn.com/20140927/san.png">
+<meta property="og:image" content="http://coolshell.cn//wp-content/uploads/2014/05/tcp_open_close.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TCP三次握手童叟无欺版">
+<meta name="twitter:description" content="对于TCP的“三次握手”建立连接，相信大家都不陌生。但TCP也是一个既古老又复杂的协议，一些细节自己也很难说清楚。理论结合实践，通过一次抓包分析，可以加深理解和记忆。
+Ethernet frame、IP、TCP，它们是什么关系？
+SYN、ACK、FIN，分别代表什么含义？">
+  
+    <link rel="alternative" href="/atom.xml" title="辫辫" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  
+  <link href="//libs.baidu.com/fontawesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjscn.b0.upaiyun.com/libs/twitter-bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="container">
+    <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="/">辫辫</a>
+    <div class="collapse navbar-collapse nav-menu">
+      <ul class="nav navbar-nav">
+      
+        <li>
+          <a href="/archives">
+            <i class="fa fa-archive"></i>
+            Archives
+          </a>
+        </li>
+      
+        <li>
+          <a href="/categories">
+            <i class="fa fa-folder"></i>
+            Categories
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tags">
+            <i class="fa fa-tags"></i>
+            Tags
+          </a>
+        </li>
+      
+        <li>
+          <a href="/wiki">
+            <i class="fa fa-book"></i>
+            Wiki
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <i class="fa fa-user"></i>
+            About
+          </a>
+        </li>
+      
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+          <li><a id="rss-link" href="/atom.xml" title="RSS Feed"><i class="fa fa-rss"></i></a></li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="clearfix"></div>
+
+      <div id='content' class="container">
+
+        <div class="page-header-wrapper">
+          <!--[if lt IE 9]><div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>提示:</strong>您的浏览器版本太低了,建议升级到 <strong><a href="http://windows.microsoft.com/zh-cn/internet-explorer/download-ie" title="IE9">IE9</a></strong> 以上,本站使用<a href="https://www.google.com/intl/zh-CN/chrome/">Chrome浏览器</a>可以获得最好的显示效果.</div><![endif]-->
+          <div class="page-header">
+            <h1 class="title">
+          
+            TCP三次握手童叟无欺版
+          
+            </h1>
+        </div>
+      </div>
+      
+      <section id="main"
+        
+      ><article id="post-y4rlf2nbe1zntajo" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div id="toc"><span class="toc-header">Contents</span><ol class="article-toc"><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#环境准备"><span class="article-toc-text">环境准备</span></a></li><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#封包概览"><span class="article-toc-text">封包概览</span></a></li><ol class="article-toc-child"><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#ethernet-ii"><span class="article-toc-text">Ethernet II</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#ip"><span class="article-toc-text">IP</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#tcp"><span class="article-toc-text">TCP</span></a></li></ol><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#三次握手"><span class="article-toc-text">三次握手</span></a></li><ol class="article-toc-child"><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#first-:-c-&gt;s"><span class="article-toc-text">First : C-&gt;S</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#second:-s-&gt;c"><span class="article-toc-text">Second: S-&gt;C</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#third-:-c-&gt;s"><span class="article-toc-text">Third : C-&gt;S</span></a></li></ol></div><p>对于TCP的“三次握手”建立连接，相信大家都不陌生。但TCP也是一个既古老又复杂的协议，一些细节自己也很难说清楚。理论结合实践，通过一次抓包分析，可以加深理解和记忆。</p>
+<p>Ethernet frame、IP、TCP，它们是什么关系？</p>
+<p>SYN、ACK、FIN，分别代表什么含义？</p>
+<a id="more"></a>
+
+<p>本文参考自：<a href="http://packetlife.net/blog/2010/jun/7/understanding-tcp-sequence-acknowledgment-numbers/" target="_blank" rel="external">Understanding TCP Sequence and Acknowledgment Numbers</a>，非常经典的一篇文章，本想做个翻译，发现已经做了不少笔记，就以笔记为主吧。</p>
+<h1 id="环境准备">环境准备</h1><p>如果你也想自己动手试一试的话，需要用到<a href="https://www.wireshark.org/download.html" target="_blank" rel="external">wireshark</a>这个网络封包分析软件。
+同时下载上文作者<a href="http://twitter.com/packetlife" target="_blank" rel="external">Jeremy Stretch</a>提供的<a href="http://media.packetlife.net/media/blog/attachments/424/TCP_example.cap" target="_blank" rel="external">TCP封包样本,点击下载</a>。样本记录了建立一次HTTP请求获取图片，成功之后断开连接的过程。</p>
+<h1 id="封包概览">封包概览</h1><p><img src="http://qipa.qiniudn.com/20140927/frame.png" alt="Data Frame"></p>
+<p>一个数据封包由以太网帧，IP包，TCP段组成。</p>
+<h2 id="ethernet-ii">Ethernet II</h2><p><img src="http://qipa.qiniudn.com/20140927/1400px-Ethernet_Type_II_Frame_format.svg.png" alt="Ethernet II"></p>
+<p>以太网帧，位于链路层，OSI的第2层，这层上的数据称为<code>Frame</code>。也称作DIX以太网，是以这个设计的主要成员，DEC,Intel和Xerox的名字命名的。</p>
+<p><img src="http://qipa.qiniudn.com/20140927/Ethernet_II.png" alt="Ethernet II"></p>
+<p>我们抓到的包中，Ethernet II的样子。这里记录了</p>
+<ul>
+<li>目标MAC地址</li>
+<li>源MAC地址</li>
+<li>协议类型：0x0800表示网络层使用的是IP协议</li>
+</ul>
+<p>这里有MAC地址，没有IP，没有端口。</p>
+<h2 id="ip">IP</h2><p>网络层协议，OSI的第3层，此层数据称为<code>package</code></p>
+<p><img src="http://qipa.qiniudn.com/20140927/IP.png" alt="IP"></p>
+<p>这里记录了目标IP，源IP等信息，但是没有端口号。</p>
+<h2 id="tcp">TCP</h2><p>传输层协议，OSI的第4层，此层数据称为<code>Segment</code></p>
+<p><a href="http://nmap.org/book/tcpip-ref.html" target="_blank" rel="external">http://nmap.org/book/tcpip-ref.html</a></p>
+<p><img src="http://nmap.org/book/images/hdr/MJB-TCP-Header-800x564.png" alt="TCP"></p>
+<p><img src="http://qipa.qiniudn.com/20140927/TCP.png" alt="TCP"></p>
+<p>TCP的数据格式里没有IP地址，但是有源端口和目标端口。</p>
+<h1 id="三次握手">三次握手</h1><p>背景知识复习到这里，开始进入正题。</p>
+<p>三次握手的话，我们看前三个包就好了。</p>
+<p><img src="http://qipa.qiniudn.com/20140927/san.png" alt=""></p>
+<ul>
+<li>SYN : Synchronize ，初始化连接</li>
+<li>FIN : Final , 终止连接</li>
+<li>ACK : Acknowledges 收到确认</li>
+</ul>
+<p>wireshark 已经把seq和ack换成了相对值，方便观察。</p>
+<h2 id="first-:-c-&gt;s">First : C-&gt;S</h2><ul>
+<li>seq   : f6 1c 6c be</li>
+<li>ack   : 0</li>
+<li>flags : 0x002 SYN</li>
+</ul>
+<p>第一次，客户端发起建立连接请求，一个数据SYN数据包。</p>
+<h2 id="second:-s-&gt;c">Second: S-&gt;C</h2><ul>
+<li>seq   : FA 58 9C 88</li>
+<li>ack   : f6 1c 6c bf // First.seq + 1</li>
+<li>flags : 0x012 SYN,ACK</li>
+</ul>
+<p>第二次，服务器收到请求，回应一个ACK确认，同时请求客户端建立连接。
+此处ack 为客户端seq ＋ 1。服务器端也随机一个自己的seq做为初始值。</p>
+<h2 id="third-:-c-&gt;s">Third : C-&gt;S</h2><ul>
+<li>seq   : f6 1c 6c bf // First.seq + 1</li>
+<li>ack   : FA 58 9C 89 // Second.seq + 1</li>
+<li>flags : 0x010 ACK</li>
+</ul>
+<p>第三次，客户端回应ACK确认，表示连接建立成功。同时seq＋1，ack为服务器端seq+1。</p>
+<p>好了，最后引用一张<a href="http://coolshell.cn/articles/11564.html" target="_blank" rel="external">钻风</a> TCP 那些事中的TCP状态切换图做为结尾：</p>
+<p><img src="http://coolshell.cn//wp-content/uploads/2014/05/tcp_open_close.jpg" alt="TCP state"></p>
+<p>最后的最后，留一个思考给大家，为什么前2次的数据包大小都是 <code>74 bytes</code>, 第3次（以及后续无payload）的数据包为 <code>66 bytes</code>？</p>
+
+      
+    </div>
+  </div>
+</article>
+
+<section id="comments">
+  <div class="ds-thread"></div>
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+</section>
+        
+          
+<aside id="sidebar">
+  
+    
+      
+<div class="widget-wrap center">
+  <ul class="pagination">
+    <li>
+      
+        <span class="nav-prev disabled">Prev</span>
+      
+    </li>
+    <li>
+      <a data-url="http://bianzi.me/2014/TCP三次握手童叟无欺版.html" data-id="y4rlf2nbe1zntajo" data_title="TCP三次握手童叟无欺版"
+        data_summary="对于TCP的“三次握手”建立连接，相信大家都不陌生。但TCP也是一个既古老又复杂的协议，一些细节自己也很难说清楚。理论结合实践，通过一次抓包分析，可以加深理解和记忆。..." class="article-share-link">Share</a>
+    </li>
+    <li>
+      
+        <a href="/2014/是谁让Young-GC越来越慢.html" class="nav-next">Next</a>
+      
+    </li>
+  </ul>
+</div>
+
+
+    
+      <div class="widget-wrap">
+  <div class="post-widget">
+    <i class="fa fa-clock-o"></i>
+    <time datetime="2014-09-23T14:59:40.000Z" itemprop="datePublished">Sep 23 2014</time>
+  </div>
+</div>
+
+    
+      
+  <div class="widget-wrap">
+    <div class="post-widget">
+      <i class="fa fa-folder"></i>
+      <a class="category-link" href="/categories/技术/">技术<span class="category-count">5</span></a><a class="category-link" href="/categories/技术/翻译/">翻译<span class="category-count">1</span></a>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap">
+    <div class="post-widget">
+      <i class="fa fa-tags"></i>
+      <a class="tag-link" href="/tags/tcp/">tcp<span class="tag-count">1</span></a>
+    </div>
+  </div>
+
+
+    
+  
+</aside>
+
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer container">
+    <div id="footer-info" class="inner">
+      <a href="/">辫辫</a> &copy; 2014 Powered by <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and Theme by <a href="https://github.com/seff/nut" target="_blank">Nut</a>.
+      本站文章采用<a href="http://creativecommons.org/licenses/by/4.0/" title="知识共享署名 4.0 国际许可协议" rel="license" target="_blank">创作共用协议</a>进行许可，遵循“CC BY-NC-SA”
+  </div>
+</footer>
+<a id="gotop" href="#">
+  <i class="fa fa-chevron-up"></i>
+</a>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="[object Object]" class="mobile-nav-link">0</a>
+  
+    <a href="[object Object]" class="mobile-nav-link">1</a>
+  
+    <a href="[object Object]" class="mobile-nav-link">2</a>
+  
+    <a href="[object Object]" class="mobile-nav-link">3</a>
+  
+    <a href="[object Object]" class="mobile-nav-link">4</a>
+  
+</nav>
+
+    
+<!-- div class="ds-thread" in main selection   -->
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"bianzi"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<script src="//cdnjscn.b0.upaiyun.com/libs/jquery/2.1.1/jquery.min.js"></script>
+
+
+<script src="/js/jquery.fitvids.js" type="text/javascript"></script>
+<script src="//cdnjscn.b0.upaiyun.com/libs/twitter-bootstrap/3.1.0/js/bootstrap.min.js"></script>
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
