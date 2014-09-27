@@ -119,7 +119,7 @@ SYN、ACK、FIN，分别代表什么含义？">
       
       <section id="main"
         
-      ><article id="post-bypzrkvizjz1b9zh" class="article article-type-post" itemscope itemprop="blogPost">
+      ><article id="post-1ifuvep73rtbe353" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
@@ -138,6 +138,8 @@ SYN、ACK、FIN，分别代表什么含义？">
 <p>一个数据封包由以太网帧，IP包，TCP段组成。</p>
 <h2 id="ethernet-ii">Ethernet II</h2><p><img src="http://qipa.qiniudn.com/20140927/1400px-Ethernet_Type_II_Frame_format.svg.png" alt="Ethernet II"></p>
 <p>以太网帧，位于链路层，OSI的第2层，这层上的数据称为<code>Frame</code>。<code>Ethernet II</code>也称作DIX以太网，是以这个设计的主要成员，DEC,Intel和Xerox的名字命名的。</p>
+<p>更多信息，移步维基:
+<a href="http://en.wikipedia.org/wiki/Ethernet_frame" target="_blank" rel="external">http://en.wikipedia.org/wiki/Ethernet_frame</a></p>
 <p><img src="http://qipa.qiniudn.com/20140927/Ethernet_II.png" alt="Ethernet II"></p>
 <p>我们抓到的包中，Ethernet II的样子。这里记录了</p>
 <ul>
@@ -182,7 +184,7 @@ SYN、ACK、FIN，分别代表什么含义？">
 <li>flags : 0x010 ACK</li>
 </ul>
 <p>第三次，客户端回应ACK确认，表示连接建立成功。同时seq＋1，ack为服务器端seq+1。</p>
-<p>好了，最后引用一张<a href="http://coolshell.cn/articles/11564.html" target="_blank" rel="external">钻风</a> TCP 那些事中的TCP状态切换图做为结尾：</p>
+<p>好了，最后引用一张皓哥<a href="http://coolshell.cn/articles/11564.html" target="_blank" rel="external">钻风</a> TCP 那些事中的状态图做为结尾：</p>
 <p><img src="http://coolshell.cn//wp-content/uploads/2014/05/tcp_open_close.jpg" alt="TCP state"></p>
 <p>最后的最后，留一个思考给大家，为什么前2次的数据包大小都是 <code>74 bytes</code>, 第3次（以及后续无payload）的数据包为 <code>66 bytes</code>？</p>
 
@@ -214,7 +216,7 @@ SYN、ACK、FIN，分别代表什么含义？">
       
     </li>
     <li>
-      <a data-url="http://bianzi.me/2014/TCP三次握手童叟无欺版.html" data-id="bypzrkvizjz1b9zh" data_title="TCP三次握手童叟无欺版"
+      <a data-url="http://bianzi.me/2014/TCP三次握手童叟无欺版.html" data-id="1ifuvep73rtbe353" data_title="TCP三次握手童叟无欺版"
         data_summary="对于TCP的“三次握手”建立连接，相信大家都不陌生。但TCP也是一个既古老又复杂的协议，一些细节自己也很难说清楚。理论结合实践，通过一次抓包分析，可以加深理解和记忆。..." class="article-share-link">Share</a>
     </li>
     <li>
