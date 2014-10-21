@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tag: jstack | 辫辫</title>
+  <title>Tag: jdk | 辫辫</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description">
 <meta property="og:type" content="website">
 <meta property="og:title" content="辫辫">
-<meta property="og:url" content="http://bianzi.me/tags/jstack/">
+<meta property="og:url" content="http://bianzi.me/tags/jdk/">
 <meta property="og:site_name" content="辫辫">
 <meta property="og:description">
 <meta name="twitter:card" content="summary">
@@ -98,7 +98,7 @@
             <h1 class="title">
           
             
-              jstack
+              jdk
             
           
             </h1>
@@ -110,7 +110,7 @@
       >
   
   
-    <article id="post-psto9fs2jaq7swt8" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-v0ujdyo3n7fz1a7p" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
@@ -120,13 +120,13 @@
         
   
     <h1 class="archive-title" itemprop="name">
-      <a class="article-title" href="/2014/找到最耗CPU的代码.html">找到最耗CPU的代码</a>
+      <a class="article-title" href="/2014/看jdk_Arrays_sort版本升级(1_QuickSort).html">看jdk_Arrays_sort版本升级(1_QuickSort)</a>
     </h1>
   
 
 
         <div class="article-date">
-  <time datetime="2014-07-21T08:10:49.000Z" itemprop="datePublished">Jul 21 2014</time>
+  <time datetime="2014-10-13T14:20:37.000Z" itemprop="datePublished">Oct 13 2014</time>
 </div>
 
       </header>
@@ -134,94 +134,20 @@
     <div class="article-entry" itemprop="articleBody">
       
         
-          <!--<div class="thumbnail"><img src="http://qipa.qiniudn.com/20140721/screenshot_136.png" alt="top"></div>-->
-          <p>有时间线上java程序莫名CPU使用率很高，需要进行优化或者排查问题，这个时候需要快速定位到运行的那个线程的和那段代码。面试的时候也偶尔会问起这个问题，还是有些同学不太知道如何操作的。</p>
-<p>本想把这简单的几步做个总结:</p>
-<ul>
-<li>top -H -p javapid  // 记住最繁忙的pid</li>
-<li>jstack  javapid &gt; stack.log</li>
-<li>printf &#39;0x%x\n&#39; threadId  //top 中 pid转换为16进制</li>
-<li>less stack.log  查看对应tid= 堆栈信息</li>
-</ul>
-<p>偶然发现一个德国人<code>Saqib Rasul</code>早在2010年就用英语给了个更好的诠释，直接翻译一下。</p>
+          <!--<div class="thumbnail"><img src="http://qipa.qiniudn.com/20141021/dualPivotQuickSort.png" alt="dualPivotQuickSort"></div>-->
+          <p>jdk中的sort算法(<code>Arrays.sort</code>)主要有2个，一个是原始类型如<code>int[]</code>使用的quickSort，和对于<code>Object[]</code>使用的mergeSort。</p>
+<p>至于为什么采用两套算法，stackoverflow上有很多讨论，有一种说法主要是由于算法本身的稳定性。个人也比较倾向与这种。quickSort虽然不稳定，但对于原始类型你无法区分2个相同的值的差别。mergeSort是稳定的，虽然需要额外一份引用copy，但相对于对象本身占用的内存大小，引用就小很多了。</p>
 
           
             <p class="article-more-link">
-              <a href="/2014/找到最耗CPU的代码.html#more">Read More</a>
+              <a href="/2014/看jdk_Arrays_sort版本升级(1_QuickSort).html#more">Read More</a>
             </p>
           
         
         <footer class="article-footer">
-          <a data-url="http://bianzi.me/2014/找到最耗CPU的代码.html" data-id="psto9fs2jaq7swt8" data_title="找到最耗CPU的代码"
-          data_summary="有时间线上java程序莫名CPU使用率很高，需要进行优化或者排查问题，这个时候需要快速定位到运行的那个线程的和那段代码。面试的时候也偶尔会问起这个问题，还是有些同学不太..." class="article-share-link">Share</a>
-          
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/翻译/">翻译</a>
-  </div>
-
-
-          
-<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link label label-primary" href="/tags/cpu/">cpu</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-success" href="/tags/jstack/">jstack</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-info" href="/tags/jvm/">jvm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-warning" href="/tags/top/">top</a></li></ul>
-
-
-        </footer>
-      
-    </div>
-  </div>
-</article>
-
-
-  
-    <article id="post-eqhhk6cm7abxpl5s" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-
-    
-      <header class="article-header">
-        <i class="fa fa-file-text-o"></i>
-        
-  
-    <h1 class="archive-title" itemprop="name">
-      <a class="article-title" href="/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html">jstack捕获的OOM unable to create new native thread</a>
-    </h1>
-  
-
-
-        <div class="article-date">
-  <time datetime="2013-11-26T06:50:52.000Z" itemprop="datePublished">Nov 26 2013</time>
-</div>
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-          <!---->
-          <h2 id="unable-to-create-new-native-thread">unable to create new native thread</h2><p>最近线上一个solr程序总是在两三天之后出现<code>OutOfMemoryError</code>: unable to create new native thread</p>
-
-          
-            <p class="article-more-link">
-              <a href="/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html#more">Read More</a>
-            </p>
-          
-        
-        <footer class="article-footer">
-          <a data-url="http://bianzi.me/2013/jstack捕获的OOM-unable-to-create-new-native-thread.html" data-id="eqhhk6cm7abxpl5s" data_title="jstack捕获的OOM unable to create new native thread"
-          data_summary="unable to create new native thread最近线上一个solr程序总是在两三天之后出现OutOfMemoryError: unable to create new native thread
-
-
-
-
-1
-2
-3
-4
-5
-6
-7
-8
-2013-11-22 22..." class="article-share-link">Share</a>
+          <a data-url="http://bianzi.me/2014/看jdk_Arrays_sort版本升级(1_QuickSort).html" data-id="v0ujdyo3n7fz1a7p" data_title="看jdk_Arrays_sort版本升级(1_QuickSort)"
+          data_summary="jdk中的sort算法(Arrays.sort)主要有2个，一个是原始类型如int[]使用的quickSort，和对于Object[]使用的mergeSort。
+至于为什么采用两套算法，stackoverflow上有很多讨论，..." class="article-share-link">Share</a>
           
           
   <div class="article-category">
@@ -230,7 +156,7 @@
 
 
           
-<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link label label-primary" href="/tags/jstack/">jstack</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-success" href="/tags/oom/">oom</a></li></ul>
+<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link label label-primary" href="/tags/jdk/">jdk</a></li><li class="article-tag-list-item"><a class="article-tag-list-link label label-success" href="/tags/sort/">sort</a></li></ul>
 
 
         </footer>
