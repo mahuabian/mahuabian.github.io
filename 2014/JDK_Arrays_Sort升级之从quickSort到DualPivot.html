@@ -109,14 +109,14 @@
       
       <section id="main"
         
-      ><article id="post-vt05hxet2u2bi5ei" class="article article-type-post" itemscope itemprop="blogPost">
+      ><article id="post-xmomc32xk89pcloy" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
     
     <div class="article-entry" itemprop="articleBody">
       
-        <div id="toc"><span class="toc-header">Contents</span><ol class="article-toc"><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#quicksort:arrays.sort(int[])"><span class="article-toc-text">quickSort:Arrays.sort(int[])</span></a></li><ol class="article-toc-child"><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#jdk6"><span class="article-toc-text">jdk6</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#jdk7"><span class="article-toc-text">jdk7</span></a></li></ol><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#额外问题"><span class="article-toc-text">额外问题</span></a></li></ol></div><p>jdk中的sort算法(<code>Arrays.sort</code>)主要有2个，一个是原始类型如<code>int[]</code>使用的quickSort，和对于<code>Object[]</code>使用的mergeSort。</p>
+        <div id="toc"><span class="toc-header">Contents</span><ol class="article-toc"><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#quicksort:arrays.sort(int[])"><span class="article-toc-text">quickSort:Arrays.sort(int[])</span></a></li><ol class="article-toc-child"><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#jdk6"><span class="article-toc-text">jdk6</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#jdk7"><span class="article-toc-text">jdk7</span></a></li></ol></div><p>jdk中的sort算法(<code>Arrays.sort</code>)主要有2个，一个是原始类型如<code>int[]</code>使用的quickSort，和对于<code>Object[]</code>使用的mergeSort。</p>
 <p>至于为什么采用两套算法，stackoverflow上有很多讨论，有一种说法主要是由于算法本身的稳定性。个人也比较倾向与这种。quickSort虽然不稳定，但对于原始类型你无法区分2个相同的值的差别。mergeSort是稳定的，虽然需要额外一份引用copy，但相对于对象本身占用的内存大小，引用就小很多了。</p>
 <a id="more"></a>
 
@@ -240,10 +240,7 @@
 <p>有一个基于数学统计的结论： Dual-Pivot Quicksort 的平均比较次数为<code>2*n*ln(n)</code>，平均交换次数为<code>0.8*n*ln(n)</code>，而传统的Quicksort分别为<code>2*n*ln(n)</code>和<code>1*n*ln(n)</code>。</p>
 <p>跟多信息移步<code>Vladimir Yaroslavskiy</code>的Dual-Pivot Quicksort替换说明：</p>
 <p><a href="http://permalink.gmane.org/gmane.comp.java.openjdk.core-libs.devel/2628" target="_blank" rel="external">http://permalink.gmane.org/gmane.comp.java.openjdk.core-libs.devel/2628</a></p>
-<h1 id="额外问题">额外问题</h1><ol>
-<li>为什么小数组直接使用插入排序？</li>
-<li></li>
-</ol>
+<p>留个小问题,为什么小数组直接使用插入排序？</p>
 
       
     </div>
@@ -269,11 +266,11 @@
   <ul class="pagination">
     <li>
       
-        <span class="nav-prev disabled">Prev</span>
+        <a href="/2014/JDK_Arrays_Sort升级之从mergeSort到TimSort.html" class="nav-prev">Prev</a>
       
     </li>
     <li>
-      <a data-url="http://bianzi.me/2014/JDK_Arrays_Sort升级之从quickSort到DualPivot.html" data-id="vt05hxet2u2bi5ei" data_title="JDK_Arrays_Sort升级之从quickSort到DualPivot"
+      <a data-url="http://bianzi.me/2014/JDK_Arrays_Sort升级之从quickSort到DualPivot.html" data-id="xmomc32xk89pcloy" data_title="JDK_Arrays_Sort升级之从quickSort到DualPivot"
         data_summary="jdk中的sort算法(Arrays.sort)主要有2个，一个是原始类型如int[]使用的quickSort，和对于Object[]使用的mergeSort。
 至于为什么采用两套算法，stackoverflow上有很多讨论，..." class="article-share-link">Share</a>
     </li>
