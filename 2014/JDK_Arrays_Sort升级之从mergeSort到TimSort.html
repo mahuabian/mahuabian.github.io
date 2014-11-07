@@ -109,14 +109,14 @@
       
       <section id="main"
         
-      ><article id="post-3db6ly8sywe4mptj" class="article article-type-post" itemscope itemprop="blogPost">
+      ><article id="post-sz642o1y8b1zld0l" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
     
     <div class="article-entry" itemprop="articleBody">
       
-        <div id="toc"><span class="toc-header">Contents</span><ol class="article-toc"><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#mergesort:arrays.sort(object[])"><span class="article-toc-text">mergeSort:Arrays.sort(Object[])</span></a></li><ol class="article-toc-child"><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#jdk6"><span class="article-toc-text">jdk6</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#jdk7"><span class="article-toc-text">jdk7</span></a></li></ol><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#文中排序算法时空复杂度一览"><span class="article-toc-text">文中排序算法时空复杂度一览</span></a></li></ol></div><p>在上一篇 <a href="./JDK_Arrays_Sort升级之从quickSort到DualPivot.html">JDK_Arrays_Sort升级之从quickSort到DualPivot</a> 中，说到了对于引用类型，JDK中采用的是 mergeSort 策略，这个算法是稳定的。</p>
+        <div id="toc"><span class="toc-header">Contents</span><ol class="article-toc"><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#mergesort:arrays.sort(object[])"><span class="article-toc-text">mergeSort:Arrays.sort(Object[])</span></a></li><ol class="article-toc-child"><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#jdk6"><span class="article-toc-text">jdk6</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#jdk7"><span class="article-toc-text">jdk7</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#jdk8"><span class="article-toc-text">jdk8</span></a></li></ol><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#文中排序算法时空复杂度一览"><span class="article-toc-text">文中排序算法时空复杂度一览</span></a></li></ol></div><p>在上一篇 <a href="./JDK_Arrays_Sort升级之从quickSort到DualPivot.html">JDK_Arrays_Sort升级之从quickSort到DualPivot</a> 中，说到了对于引用类型，JDK中采用的是 mergeSort 策略，这个算法是稳定的。</p>
 <p>到了jdk7之后，这个算法又做了细微调整，把python中用到的list.sort算法<code>TimSort</code>迁移了过来。</p>
 <a id="more"></a>
 
@@ -237,6 +237,35 @@
 <span class="number">300</span>    }
 </pre></td></tr></table></figure>
 
+<p>到了jdk8 ，mergeSort的多核并发友好性体现出来了，结合 <code>ForkJoinPool</code>，加入了 <code>parallelSort</code></p>
+<h2 id="jdk8">jdk8</h2><p>不管是基本类型，引用类型，统统 parallel merge Sort .</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="code"><pre><span class="number">999</span>     <span class="keyword">public</span> <span class="keyword">static</span> &lt;T extends Comparable&lt;? <span class="keyword">super</span> T&gt;&gt; <span class="keyword">void</span>  <span class="title">parallelSort</span>(T[] a) {
+<span class="number">1000</span>        <span class="keyword">int</span> n = a.length, p, g;
+<span class="number">1001</span>        <span class="keyword">if</span> (n &lt;= MIN_ARRAY_SORT_GRAN ||
+<span class="number">1002</span>            (p = ForkJoinPool.getCommonPoolParallelism()) == <span class="number">1</span>)
+<span class="number">1003</span>            TimSort.sort(a, <span class="number">0</span>, n, NaturalOrder.INSTANCE, <span class="keyword">null</span>, <span class="number">0</span>, <span class="number">0</span>);
+<span class="number">1004</span>        <span class="keyword">else</span>
+<span class="number">1005</span>            <span class="keyword">new</span> ArraysParallelSortHelpers.FJObject.Sorter&lt;T&gt;
+<span class="number">1006</span>                (<span class="keyword">null</span>, a,
+<span class="number">1007</span>                 (T[])Array.newInstance(a.getClass().getComponentType(), n),
+<span class="number">1008</span>                 <span class="number">0</span>, n, <span class="number">0</span>, ((g = n / (p &lt;&lt; <span class="number">2</span>)) &lt;= MIN_ARRAY_SORT_GRAN) ?
+<span class="number">1009</span>                 MIN_ARRAY_SORT_GRAN : g, NaturalOrder.INSTANCE).invoke();
+<span class="number">1010</span>    }
+</pre></td></tr></table></figure>
+
+
 <h1 id="文中排序算法时空复杂度一览">文中排序算法时空复杂度一览</h1><table>
 <thead>
 <tr>
@@ -308,7 +337,7 @@
       
     </li>
     <li>
-      <a data-url="http://bianzi.me/2014/JDK_Arrays_Sort升级之从mergeSort到TimSort.html" data-id="3db6ly8sywe4mptj" data_title="JDK_Arrays_Sort升级之从mergeSort到TimSort"
+      <a data-url="http://bianzi.me/2014/JDK_Arrays_Sort升级之从mergeSort到TimSort.html" data-id="sz642o1y8b1zld0l" data_title="JDK_Arrays_Sort升级之从mergeSort到TimSort"
         data_summary="在上一篇 JDK_Arrays_Sort升级之从quickSort到DualPivot 中，说到了对于引用类型，JDK中采用的是 mergeSort 策略，这个算法是稳定的。
 到了jdk7之后，这个算法又做了细微调..." class="article-share-link">Share</a>
     </li>
