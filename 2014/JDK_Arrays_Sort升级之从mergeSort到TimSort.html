@@ -5,15 +5,19 @@
   
   <title>JDK_Arrays_Sort升级之从mergeSort到TimSort | 辫辫</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description">
+  <meta name="description" content="在上一篇 JDK_Arrays_Sort升级之从quickSort到DualPivot 中，说到了对于引用类型，JDK中采用的是 mergeSort 策略，这个算法是稳定的。
+到了jdk7之后，这个算法又做了细微调整，把python中用到的list.sort算法TimSort迁移了过来。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JDK_Arrays_Sort升级之从mergeSort到TimSort">
 <meta property="og:url" content="http://bianzi.me/2014/JDK_Arrays_Sort升级之从mergeSort到TimSort.html">
 <meta property="og:site_name" content="辫辫">
-<meta property="og:description">
+<meta property="og:description" content="在上一篇 JDK_Arrays_Sort升级之从quickSort到DualPivot 中，说到了对于引用类型，JDK中采用的是 mergeSort 策略，这个算法是稳定的。
+到了jdk7之后，这个算法又做了细微调整，把python中用到的list.sort算法TimSort迁移了过来。">
+<meta property="og:image" content="http://upload.wikimedia.org/wikipedia/commons/6/63/Selection_of_minrun_by_timsort.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JDK_Arrays_Sort升级之从mergeSort到TimSort">
-<meta name="twitter:description">
+<meta name="twitter:description" content="在上一篇 JDK_Arrays_Sort升级之从quickSort到DualPivot 中，说到了对于引用类型，JDK中采用的是 mergeSort 策略，这个算法是稳定的。
+到了jdk7之后，这个算法又做了细微调整，把python中用到的list.sort算法TimSort迁移了过来。">
   
     <link rel="alternative" href="/atom.xml" title="辫辫" type="application/atom+xml">
   
@@ -105,14 +109,177 @@
       
       <section id="main"
         
-      ><article id="post-sq3mlbfwfg36dvv7" class="article article-type-post" itemscope itemprop="blogPost">
+      ><article id="post-8qbv8ctc5l6xdhbd" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
 
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <div id="toc"><span class="toc-header">Contents</span><ol class="article-toc"><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#mergesort:arrays.sort(object[])"><span class="article-toc-text">mergeSort:Arrays.sort(Object[])</span></a></li><ol class="article-toc-child"><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#jdk6"><span class="article-toc-text">jdk6</span></a></li><li class="article-toc-item article-toc-level-2"><a class="article-toc-link" href="#jdk7"><span class="article-toc-text">jdk7</span></a></li></ol><li class="article-toc-item article-toc-level-1"><a class="article-toc-link" href="#文中排序算法时空复杂度一览"><span class="article-toc-text">文中排序算法时空复杂度一览</span></a></li></ol></div><p>在上一篇 <a href="./JDK_Arrays_Sort升级之从quickSort到DualPivot.html">JDK_Arrays_Sort升级之从quickSort到DualPivot</a> 中，说到了对于引用类型，JDK中采用的是 mergeSort 策略，这个算法是稳定的。</p>
+<p>到了jdk7之后，这个算法又做了细微调整，把python中用到的list.sort算法<code>TimSort</code>迁移了过来。</p>
+<a id="more"></a>
+
+
+
+<h1 id="mergesort:arrays.sort(object[])">mergeSort:Arrays.sort(Object[])</h1><p>先来看看JDK6中传统的mergeSort.</p>
+<h2 id="jdk6">jdk6</h2><p>先复制一份数组（引用，内存浪费还可以接受），开始递归merge.</p>
+<p>不过是个优化过的mergeSort，结合了插入排序。默认 <code>INSERTIONSORT_THRESHOLD = 7</code>，对于低于这个数字的小块直接使用插入排序。插入排序中的常量因子可能使得它在n较小时，在许多机器上实际运行得更快。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre><span class="number">1153</span>        <span class="comment">// Insertion sort on smallest arrays</span>
+<span class="number">1154</span>        <span class="keyword">if</span> (length &lt; INSERTIONSORT_THRESHOLD) {
+<span class="number">1155</span>            <span class="keyword">for</span> (<span class="keyword">int</span> i=low; i&lt;high; i++)
+<span class="number">1156</span>                <span class="keyword">for</span> (<span class="keyword">int</span> j=i; j&gt;low &&
+<span class="number">1157</span>                         ((Comparable) dest[j-<span class="number">1</span>]).compareTo(dest[j])&gt;<span class="number">0</span>; j--)
+<span class="number">1158</span>                    swap(dest, j, j-<span class="number">1</span>);
+<span class="number">1159</span>            <span class="keyword">return</span>;
+<span class="number">1160</span>        }
+</pre></td></tr></table></figure>
+
+<p>然后就是分两半，递归进行merge。</p>
+<p>jdk7中对简单粗暴的对半分进行了优化，核心：充分利用已排好的序列作为子块。</p>
+<h2 id="jdk7">jdk7</h2><p>这里有个细节，TimSort 要求严格的比较器实现，所以为了兼容老的代码，JDK加了个选项，通过System property 进行设置是否启用TimSort.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+</pre></td><td class="code"><pre><span class="number">386</span>     <span class="keyword">static</span> <span class="keyword">final</span> class More ...LegacyMergeSort {
+<span class="number">387</span>         <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">boolean</span> userRequested =
+<span class="number">388</span>             java.security.AccessController.doPrivileged(
+<span class="number">389</span>                 <span class="keyword">new</span> sun.security.action.GetBooleanAction(
+<span class="number">390</span>                     <span class="string">"java.util.Arrays.useLegacyMergeSort"</span>)).booleanValue();
+<span class="number">391</span>     }
+</pre></td></tr></table></figure>
+
+<p>何为严格的比较器，规则如下:</p>
+<ul>
+<li>sgn(compare(x, y)) == -sgn(compare(y, x))</li>
+<li>((compare(x, y)&gt;0) &amp;&amp; (compare(y, z)&gt;0)) THEN compare(x, z)&gt;0</li>
+<li>compare(x, y)==0 THEN sgn(compare(x, z))==sgn(compare(y, z))   </li>
+</ul>
+<p>参考:</p>
+<p><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Comparator.html#compare%28T,%20T%29" target="_blank" rel="external">http://docs.oracle.com/javase/7/docs/api/java/util/Comparator.html#compare</a></p>
+<p>我们先来看个不严格的比较的例子:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre><span class="keyword">int</span> compare(T o1, T o2){
+   <span class="keyword">return</span> o2 &gt; o1 ? <span class="number">1</span> : -<span class="number">1</span> ;       
+}
+</pre></td></tr></table></figure>
+
+<p>这个实现就不满足第一个规律，但是在jdk6上可以正常排序。如果使用TimSort就会出现</p>
+<figure class="highlight log"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre><span class="label">java.lang.IllegalArgumentException:</span> Comparison method violates its general contract!
+        at java<span class="preprocessor">.util</span><span class="preprocessor">.TimSort</span><span class="preprocessor">.mergeHi</span>(TimSort<span class="preprocessor">.java</span>:<span class="number">868</span>)
+        at java<span class="preprocessor">.util</span><span class="preprocessor">.TimSort</span><span class="preprocessor">.mergeAt</span>(TimSort<span class="preprocessor">.java</span>:<span class="number">485</span>)
+        at java<span class="preprocessor">.util</span><span class="preprocessor">.TimSort</span><span class="preprocessor">.mergeForceCollapse</span>(TimSort<span class="preprocessor">.java</span>:<span class="number">426</span>)
+        at java<span class="preprocessor">.util</span><span class="preprocessor">.TimSort</span><span class="preprocessor">.sort</span>(TimSort<span class="preprocessor">.java</span>:<span class="number">223</span>)
+        at java<span class="preprocessor">.util</span><span class="preprocessor">.TimSort</span><span class="preprocessor">.sort</span>(TimSort<span class="preprocessor">.java</span>:<span class="number">173</span>)
+        at java<span class="preprocessor">.util</span><span class="preprocessor">.Arrays</span><span class="preprocessor">.sort</span>(Arrays<span class="preprocessor">.java</span>:<span class="number">659</span>)
+        at java<span class="preprocessor">.util</span><span class="preprocessor">.Collections</span><span class="preprocessor">.sort</span>(Collections<span class="preprocessor">.java</span>:<span class="number">217</span>)
+</pre></td></tr></table></figure>
+
+<p>核心思想 : 查找排好序的子块(逆序就反转)</p>
+<p><img src="http://upload.wikimedia.org/wikipedia/commons/6/63/Selection_of_minrun_by_timsort.png" alt="TimSort Find"></p>
+<p>来自 <a href="http://en.wikipedia.org/wiki/Timsort" target="_blank" rel="external">http://en.wikipedia.org/wiki/Timsort</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="code"><pre><span class="number">283</span>    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span>  <span class="title">countRunAndMakeAscending</span>(Object[] a, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi) {
+<span class="number">284</span>        <span class="keyword">assert</span> lo &lt; hi;
+<span class="number">285</span>        <span class="keyword">int</span> runHi = lo + <span class="number">1</span>;
+<span class="number">286</span>        <span class="keyword">if</span> (runHi == hi)
+<span class="number">287</span>            <span class="keyword">return</span> <span class="number">1</span>;
+<span class="number">288</span>
+<span class="number">289</span>        <span class="comment">// Find end of run, and reverse range if descending</span>
+<span class="number">290</span>        <span class="keyword">if</span> (((Comparable) a[runHi++]).compareTo(a[lo]) &lt; <span class="number">0</span>) { <span class="comment">// Descending</span>
+<span class="number">291</span>            <span class="keyword">while</span> (runHi &lt; hi && ((Comparable) a[runHi]).compareTo(a[runHi - <span class="number">1</span>]) &lt; <span class="number">0</span>)
+<span class="number">292</span>                runHi++;
+<span class="number">293</span>            reverseRange(a, lo, runHi);
+<span class="number">294</span>        } <span class="keyword">else</span> {                              <span class="comment">// Ascending</span>
+<span class="number">295</span>            <span class="keyword">while</span> (runHi &lt; hi && ((Comparable) a[runHi]).compareTo(a[runHi - <span class="number">1</span>]) &gt;= <span class="number">0</span>)
+<span class="number">296</span>                runHi++;
+<span class="number">297</span>        }
+<span class="number">298</span>
+<span class="number">299</span>        <span class="keyword">return</span> runHi - lo;
+<span class="number">300</span>    }
+</pre></td></tr></table></figure>
+
+<h1 id="文中排序算法时空复杂度一览">文中排序算法时空复杂度一览</h1><table>
+<thead>
+<tr>
+<th>.</th>
+<th style="text-align:center">TimSort</th>
+<th style="text-align:center">MergeSort</th>
+<th style="text-align:center">QuickSort</th>
+<th style="text-align:center">InsertionSort</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Best</td>
+<td style="text-align:center">n</td>
+<td style="text-align:center">n * lg(n)</td>
+<td style="text-align:center">n * lg(n)</td>
+<td style="text-align:center">n</td>
+</tr>
+<tr>
+<td>Average</td>
+<td style="text-align:center">n * lg(n)</td>
+<td style="text-align:center">n * lg(n)</td>
+<td style="text-align:center">n * lg(n)</td>
+<td style="text-align:center">n ^ 2   </td>
+</tr>
+<tr>
+<td>worst</td>
+<td style="text-align:center">n * lg(n)</td>
+<td style="text-align:center">n * lg(n)</td>
+<td style="text-align:center">n ^ 2</td>
+<td style="text-align:center">n ^ 2  </td>
+</tr>
+<tr>
+<td>Space</td>
+<td style="text-align:center">n</td>
+<td style="text-align:center">n</td>
+<td style="text-align:center">log (n)</td>
+<td style="text-align:center">1</td>
+</tr>
+</tbody>
+</table>
+<p>TimSort 成功的把接近排好序的数组的复杂度从 <code>n * lg(n)</code> 优化到 <code>n</code> .</p>
+
       
     </div>
   </div>
@@ -141,8 +308,9 @@
       
     </li>
     <li>
-      <a data-url="http://bianzi.me/2014/JDK_Arrays_Sort升级之从mergeSort到TimSort.html" data-id="sq3mlbfwfg36dvv7" data_title="JDK_Arrays_Sort升级之从mergeSort到TimSort"
-        data_summary="" class="article-share-link">Share</a>
+      <a data-url="http://bianzi.me/2014/JDK_Arrays_Sort升级之从mergeSort到TimSort.html" data-id="8qbv8ctc5l6xdhbd" data_title="JDK_Arrays_Sort升级之从mergeSort到TimSort"
+        data_summary="在上一篇 JDK_Arrays_Sort升级之从quickSort到DualPivot 中，说到了对于引用类型，JDK中采用的是 mergeSort 策略，这个算法是稳定的。
+到了jdk7之后，这个算法又做了细微调..." class="article-share-link">Share</a>
     </li>
     <li>
       
@@ -166,7 +334,7 @@
   <div class="widget-wrap">
     <div class="post-widget">
       <i class="fa fa-folder"></i>
-      
+      <a class="category-link" href="/categories/技术/">技术<span class="category-count">7</span></a>
     </div>
   </div>
 
@@ -176,7 +344,7 @@
   <div class="widget-wrap">
     <div class="post-widget">
       <i class="fa fa-tags"></i>
-      
+      <a class="tag-link" href="/tags/jdk/">jdk<span class="tag-count">2</span></a><a class="tag-link" href="/tags/sort/">sort<span class="tag-count">2</span></a>
     </div>
   </div>
 
